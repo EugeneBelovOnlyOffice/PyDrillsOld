@@ -2,7 +2,7 @@ import serial
 import asyncio
 import time
 
-#
+# иницилизация порта Ардуино
 ser = serial.Serial()
 ser.baudrate = 9600
 ser.port = "COM6"
@@ -20,6 +20,7 @@ async def periodic(interval_sec, coro_name, *args, **kwargs):
         await coro_name(*args, **kwargs)
 
 
+# получаем строку сверел с порта Ардуино
 async def fun1():
     time.sleep(0.5)
     ser.write(b"1")
@@ -29,16 +30,25 @@ async def fun1():
     ser.close()
 
 
+# функция, которая ничего не делает
 async def fun2():
-    print("nothing")
+    print("функция 2")
 
 
+# функция, которая ничего не делает
+async def fun3():
+    print("функция 3")
+
+
+# запускаем таски
 async def main():
     task1 = asyncio.create_task(periodic(0.1, fun1))
-    task2 = asyncio.create_task(fun2())
+    task2 = asyncio.create_task(periodic(2, fun2))
+    task3 = asyncio.create_task(periodic(1, fun3))
 
     await task1
     await task2
+    await task3
 
 
 print(time.strftime("%X"))
