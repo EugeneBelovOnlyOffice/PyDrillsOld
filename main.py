@@ -16,23 +16,19 @@ ser.open()
 time.sleep(2)
 
 
-# читаем порт асинхронно
-async def read_and_print(aioserial_instance: aioserial.AioSerial):
-    while True:
-        print(
-            (await aioserial_instance.read_async()).decode(errors="ignore"),
-            end="",
-            flush=True,
-        )
+# функция, строит массив из сверел (два элемента)
+def get_indices(element, lst):
+    return [i for i in range(len(lst)) if lst[i] == element]
 
 
-# получаем строку сверел с порта Ардуино
+# функция, которая ничего не делает
 async def fun1():
     await asyncio.sleep(1)
     print("функция 1")
     return "1"
 
 
+# функция, которая ничего не делает
 async def fun2():
     await asyncio.sleep(1)
     print("функция 2")
@@ -46,22 +42,48 @@ async def fun3():
     return "3"
 
 
-# запускаем таски
 async def main():
     # эта функция срабатывает при нажатии кнопки
     def btn_clk():
         print("Button clicked")
         form.lcdNumber.display(form.lcdNumber.intValue() + 1)
 
+    # эта функция срабатывает при изменении текста
     def ln_changed():
         print("Text changed")
         form.lcdNumber_2.display(2)
 
-    def lbl3_add():
+    # эта функция получает строку с ардуино и вносит значения в интерфейс
+    def read_serial_arduino():
         ser.write(b"1")
         asyncio.sleep(0.1)
         while ser.in_waiting:
-            form.label_3.setText(ser.readline().decode("utf-8")[:-1])
+            arduinostring = ser.readline().decode("utf-8")[:-2]
+            form.label_3.setText(arduinostring)
+            symbols = []  # массив символов - показаний ардуино
+            drills = [
+                "2",
+                "3",
+                "4",
+                "6",
+                "8",
+                "10",
+                "12",
+                "15",
+                "17",
+                "18",
+                "20",
+                "21",
+                "22",
+                "24",
+                "26",
+            ]  # массив обозначений сверел селектора
+
+            for symbol in arduinostring:
+                symbols += symbol
+            indices = get_indices("1", symbols)
+            print(symbols)
+            print(indices)
 
     # подключаем файл, полученный в QtDesigner
     Form, Window = uic.loadUiType("interface.ui")
@@ -71,11 +93,12 @@ async def main():
     window.show()
 
     # настраиваем сценарий для элемента pushButton
-    form.pushButton.clicked.connect(lbl3_add)
+    form.pushButton.clicked.connect(read_serial_arduino)
     form.lineEdit.textChanged.connect(ln_changed)
 
+    # обновление строки с ардуино и lcd окон на интерфейсе
     timer1 = QtCore.QTimer()  # set up your QTimer
-    timer1.timeout.connect(lbl3_add)  # connect it to your update function
+    timer1.timeout.connect(read_serial_arduino)  # connect it to your update function
     timer1.start(1000)  # set it to timeout in 5000 ms
 
     # запускаем окно программы
