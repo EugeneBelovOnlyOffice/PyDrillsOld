@@ -5,38 +5,34 @@ from PyQt6 import uic
 import sys
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton
 from PyQt6 import QtCore
+import aioserial
+
 
 # иницилизация порта Ардуино
 ser = serial.Serial()
 ser.baudrate = 9600
-ser.port = "COM3"
+ser.port = "COM6"
 ser.open()
 time.sleep(2)
 
-# возвращаемая строка ардуино
-astring = ""
 
-
-# helper function for running a target periodically
-async def periodic(interval_sec, coro_name, *args, **kwargs):
-    # loop forever
+# читаем порт асинхронно
+async def read_and_print(aioserial_instance: aioserial.AioSerial):
     while True:
-        # wait an interval
-        await asyncio.sleep(interval_sec)
-        # await the target
-        await coro_name(*args, **kwargs)
+        print(
+            (await aioserial_instance.read_async()).decode(errors="ignore"),
+            end="",
+            flush=True,
+        )
 
 
 # получаем строку сверел с порта Ардуино
 async def fun1():
-    time.sleep(0.5)
-    ser.write(b"1")
-    time.sleep(0.1)
-    while ser.in_waiting:
-        return ser.readline().decode("utf-8")[:-1]
+    await asyncio.sleep(1)
+    print("функция 1")
+    return "1"
 
 
-# функция, которая ничего не делает
 async def fun2():
     await asyncio.sleep(1)
     print("функция 2")
@@ -52,10 +48,6 @@ async def fun3():
 
 # запускаем таски
 async def main():
-    task1 = asyncio.create_task(fun1())  # periodic(0.1, fun1)
-    task2 = asyncio.create_task(fun2())
-    task3 = asyncio.create_task(fun3())
-
     # эта функция срабатывает при нажатии кнопки
     def btn_clk():
         print("Button clicked")
@@ -66,9 +58,8 @@ async def main():
         form.lcdNumber_2.display(2)
 
     def lbl3_add():
-        time.sleep(0.5)
         ser.write(b"1")
-        time.sleep(0.1)
+        asyncio.sleep(0.1)
         while ser.in_waiting:
             form.label_3.setText(ser.readline().decode("utf-8")[:-1])
 
