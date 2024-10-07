@@ -56,7 +56,7 @@ async def main():
 
         x = requests.get(url, myobj)
 
-        # print the response text (the content of the requested file):
+        # выводим ответ
         print(x.text)
 
     # эта функция получает строку с ардуино и вносит значения в интерфейс
