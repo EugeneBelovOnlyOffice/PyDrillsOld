@@ -80,7 +80,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>230</y>
+      <y>250</y>
       <width>121</width>
       <height>71</height>
      </rect>
@@ -103,7 +103,7 @@
     <property name="geometry">
      <rect>
       <x>230</x>
-      <y>220</y>
+      <y>250</y>
       <width>121</width>
       <height>71</height>
      </rect>
@@ -113,26 +113,26 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>110</y>
+      <y>120</y>
       <width>131</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>Сверла селектора</string>
+     <string>Сверло селектора 1</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
       <x>230</x>
-      <y>110</y>
+      <y>120</y>
       <width>131</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>Сверла базы</string>
+     <string>Сверло базы 1</string>
     </property>
    </widget>
    <widget class="QPushButton" name="pushButton">
@@ -149,6 +149,32 @@
     </property>
     <property name="checkable">
      <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>230</y>
+      <width>131</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Сверло селектора 1</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_7">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>230</y>
+      <width>131</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Сверло базы 2</string>
     </property>
    </widget>
   </widget>

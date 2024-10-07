@@ -5,13 +5,13 @@ from PyQt6 import uic
 import sys
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton
 from PyQt6 import QtCore
-import aioserial
+import requests
 
 
 # иницилизация порта Ардуино
 ser = serial.Serial()
 ser.baudrate = 9600
-ser.port = "COM6"
+ser.port = "COM3"
 ser.open()
 time.sleep(2)
 
@@ -48,10 +48,16 @@ async def main():
         print("Button clicked")
         form.lcdNumber.display(form.lcdNumber.intValue() + 1)
 
-    # эта функция срабатывает при изменении текста
+    # эта функция срабатывает при изменении текста в поле id раскладки
     def ln_changed():
-        print("Text changed")
-        form.lcdNumber_2.display(2)
+
+        url = "https://httpbin.org/get"
+        myobj = {"Zhopa": "Kedy", "Kon": "Vpalto"}
+
+        x = requests.get(url, myobj)
+
+        # print the response text (the content of the requested file):
+        print(x.text)
 
     # эта функция получает строку с ардуино и вносит значения в интерфейс
     def read_serial_arduino():
@@ -84,6 +90,14 @@ async def main():
             indices = get_indices("1", symbols)
             print(symbols)
             print(indices)
+            try:
+                form.lcdNumber.display(drills[indices[0]])
+            except IndexError:
+                form.lcdNumber.display("0")
+            try:
+                form.lcdNumber_2.display(drills[indices[1]])
+            except IndexError:
+                form.lcdNumber_2.display("0")
 
     # подключаем файл, полученный в QtDesigner
     Form, Window = uic.loadUiType("interface.ui")
