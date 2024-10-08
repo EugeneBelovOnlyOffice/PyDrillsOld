@@ -122,6 +122,7 @@ async def main():
     timer1.timeout.connect(read_serial_arduino)  # connect it to your update function
     timer1.start(1000)  # set it to timeout in 5000 ms
 
+    # сравнение показаний датчика и базы и управление окном интерфейса
     timer2 = QtCore.QTimer()  # set up your QTimer
     timer2.timeout.connect(comparison)  # connect it to your update function
     timer2.start(1000)  # set it to timeout in 5000 ms
