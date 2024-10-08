@@ -11,20 +11,19 @@ import requests
 # иницилизация порта Ардуино
 ser = serial.Serial()
 ser.baudrate = 9600
-ser.port = "COM3"
+ser.port = "COM6"
 ser.open()
 time.sleep(2)
 
 
-# функция, строит массив из сверел (два элемента)
+# функция, строит массив из сверел (два элемента). Сверла, вынутые с селектора
 def get_indices(element, lst):
     return [i for i in range(len(lst)) if lst[i] == element]
 
 
-# функция, которая ничего не делает
-async def fun1():
-    await asyncio.sleep(1)
-    print("функция 1")
+# функция, сравнивает показания селектра и базы. Сворачивает окно, если они совпадают
+def comparison():
+    print("comparison_fun")
     return "1"
 
 
@@ -46,18 +45,23 @@ async def main():
     # эта функция срабатывает при нажатии кнопки
     def btn_clk():
         print("Button clicked")
-        form.lcdNumber.display(form.lcdNumber.intValue() + 1)
+        form.lineEdit.clear()
 
     # эта функция срабатывает при изменении текста в поле id раскладки
     def ln_changed():
+        url = "http://10.55.128.67:5000/cutting/drills"
+        myobj = {"markerID": form.lineEdit.text()}
+        try:
+            x = requests.get(url, myobj)
+            # выводим ответ
 
-        url = "https://httpbin.org/get"
-        myobj = {"Zhopa": "Kedy", "Kon": "Vpalto"}
-
-        x = requests.get(url, myobj)
-
-        # выводим ответ
-        print(x.text)
+            form.lcdNumber_3.display(x.json().get("Сверло1", None))
+            form.lcdNumber_4.display(x.json().get(("Сверло2", None)))
+            print(x.json().get("Сверло1", None))
+            print(x.json().get(("Сверло2", None)))
+        except:
+            form.lcdNumber_3.display(None)
+            form.lcdNumber_4.display(None)
 
     # эта функция получает строку с ардуино и вносит значения в интерфейс
     def read_serial_arduino():
@@ -88,16 +92,19 @@ async def main():
             for symbol in arduinostring:
                 symbols += symbol
             indices = get_indices("1", symbols)
-            print(symbols)
-            print(indices)
-            try:
-                form.lcdNumber.display(drills[indices[0]])
-            except IndexError:
-                form.lcdNumber.display("0")
-            try:
-                form.lcdNumber_2.display(drills[indices[1]])
-            except IndexError:
-                form.lcdNumber_2.display("0")
+            if len(indices) <= 2:
+                try:
+                    form.lcdNumber.display(drills[indices[0]])
+                except IndexError:
+                    form.lcdNumber.display(None)
+                try:
+                    form.lcdNumber_2.display(drills[indices[1]])
+                except IndexError:
+                    form.lcdNumber_2.display(None)
+            else:
+                form.lcdNumber.display(None)
+                form.lcdNumber_2.display(None)
+        comparison()
 
     # подключаем файл, полученный в QtDesigner
     Form, Window = uic.loadUiType("interface.ui")
@@ -107,13 +114,17 @@ async def main():
     window.show()
 
     # настраиваем сценарий для элемента pushButton
-    form.pushButton.clicked.connect(read_serial_arduino)
+    form.pushButton.clicked.connect(btn_clk)
     form.lineEdit.textChanged.connect(ln_changed)
 
     # обновление строки с ардуино и lcd окон на интерфейсе
     timer1 = QtCore.QTimer()  # set up your QTimer
     timer1.timeout.connect(read_serial_arduino)  # connect it to your update function
     timer1.start(1000)  # set it to timeout in 5000 ms
+
+    timer2 = QtCore.QTimer()  # set up your QTimer
+    timer2.timeout.connect(comparison)  # connect it to your update function
+    timer2.start(1000)  # set it to timeout in 5000 ms
 
     # запускаем окно программы
     app.exec()

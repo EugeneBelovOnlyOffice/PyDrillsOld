@@ -138,14 +138,14 @@
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>380</y>
+      <x>20</x>
+      <y>70</y>
       <width>75</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>Очистить</string>
     </property>
     <property name="checkable">
      <bool>false</bool>
