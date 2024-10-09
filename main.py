@@ -2,10 +2,10 @@ import serial
 import asyncio
 import time
 from PyQt6 import uic
-import sys
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton
 from PyQt6 import QtCore
 import requests
+import filemon
 
 
 # иницилизация порта Ардуино
@@ -22,9 +22,11 @@ def get_indices(element, lst):
 
 
 # функция, сравнивает показания селектра и базы. Сворачивает окно, если они совпадают
-def comparison():
-    print("comparison_fun")
-    return "1"
+def comparison(lcd1, lcd2):
+    if lcd1 == lcd2:
+        return 1
+    else:
+        return 0
 
 
 # функция, которая ничего не делает
@@ -104,7 +106,16 @@ async def main():
             else:
                 form.lcdNumber.display(None)
                 form.lcdNumber_2.display(None)
-        comparison()
+
+        # запускаем функцию сравнения значений селектора и базы. Управляем окном.
+        if comparison(form.lcdNumber.value(), form.lcdNumber_3.value()) and comparison(
+            form.lcdNumber_2.value(), form.lcdNumber_4.value()
+        ):
+            window.hide()
+            return 1
+        else:
+            window.show()
+            return 0
 
     # подключаем файл, полученный в QtDesigner
     Form, Window = uic.loadUiType("interface.ui")
@@ -121,11 +132,6 @@ async def main():
     timer1 = QtCore.QTimer()  # set up your QTimer
     timer1.timeout.connect(read_serial_arduino)  # connect it to your update function
     timer1.start(1000)  # set it to timeout in 5000 ms
-
-    # сравнение показаний датчика и базы и управление окном интерфейса
-    timer2 = QtCore.QTimer()  # set up your QTimer
-    timer2.timeout.connect(comparison)  # connect it to your update function
-    timer2.start(1000)  # set it to timeout in 5000 ms
 
     # запускаем окно программы
     app.exec()
