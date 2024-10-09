@@ -2,10 +2,10 @@ import serial
 import asyncio
 import time
 from PyQt6 import uic
-from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton
+from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QWidget
 from PyQt6 import QtCore
 import requests
-import filemon
+import sys
 
 
 # иницилизация порта Ардуино
@@ -14,6 +14,9 @@ ser.baudrate = 9600
 ser.port = "COM6"
 ser.open()
 time.sleep(2)
+
+# инициализация каталога логов Bullmer
+bullmer_log_folder = "c:\\TEMP"
 
 
 # функция, строит массив из сверел (два элемента). Сверла, вынутые с селектора
@@ -29,22 +32,13 @@ def comparison(lcd1, lcd2):
         return 0
 
 
-# функция, которая ничего не делает
-async def fun2():
-    await asyncio.sleep(1)
-    print("функция 2")
-    return "2"
-
-
-# функция, которая ничего не делает
-async def fun3():
-    await asyncio.sleep(1)
-    print("функция 3")
-    return "3"
+# функция, которая проверяет лог
+def logchk():
+    print("Проверка лога")
 
 
 async def main():
-    # эта функция срабатывает при нажатии кнопки
+    # эта функция срабатывает при нажатии кнопки "Очистить"
     def btn_clk():
         print("Button clicked")
         form.lineEdit.clear()
@@ -132,6 +126,10 @@ async def main():
     timer1 = QtCore.QTimer()  # set up your QTimer
     timer1.timeout.connect(read_serial_arduino)  # connect it to your update function
     timer1.start(1000)  # set it to timeout in 5000 ms
+
+    # проверяем изменился ли файл
+    fs_watcher = QtCore.QFileSystemWatcher([bullmer_log_folder])
+    fs_watcher.directoryChanged.connect(logchk)
 
     # запускаем окно программы
     app.exec()
