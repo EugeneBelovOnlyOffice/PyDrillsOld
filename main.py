@@ -6,7 +6,9 @@ from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QWidget
 from PyQt6 import QtCore
 import requests
 import sys
-
+import glob
+import os
+import pandas as pd
 
 # иницилизация порта Ардуино
 ser = serial.Serial()
@@ -18,13 +20,16 @@ time.sleep(2)
 # инициализация каталога логов Bullmer
 bullmer_log_folder = "c:\\TEMP"
 
+# самый ранний файл csv в каталоге булмера (маска поиска)
+bullmer_log_folder_filter = "c:\\TEMP\*.csv"
+
 
 # функция, строит массив из сверел (два элемента). Сверла, вынутые с селектора
 def get_indices(element, lst):
     return [i for i in range(len(lst)) if lst[i] == element]
 
 
-# функция, сравнивает показания селектра и базы. Сворачивает окно, если они совпадают
+# функция, сравнивает показания селектра и базы.
 def comparison(lcd1, lcd2):
     if lcd1 == lcd2:
         return 1
@@ -34,7 +39,16 @@ def comparison(lcd1, lcd2):
 
 # функция, которая проверяет лог
 def logchk():
-    print("Проверка лога")
+    # возвращаем саммый ранний файл csv в каталоге логов
+    list_of_files = glob.glob(
+        bullmer_log_folder_filter
+    )  # * means all if need specific format then *.csv
+    latest_file = max(list_of_files, key=os.path.getctime)
+    print(latest_file)
+
+    # создаем датафрейм и выводим его в консоль
+    df = pd.read_csv(latest_file)
+    print(df.tail(1))
 
 
 async def main():
