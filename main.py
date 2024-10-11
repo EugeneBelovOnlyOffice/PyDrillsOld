@@ -5,7 +5,6 @@ from PyQt6 import uic
 from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QWidget
 from PyQt6 import QtCore
 import requests
-import sys
 import glob
 import os
 import pandas as pd
@@ -17,11 +16,17 @@ ser.port = "COM6"
 ser.open()
 time.sleep(2)
 
-# инициализация каталога логов Bullmer
-bullmer_log_folder = "c:\\TEMP"
-
-# самый ранний файл csv в каталоге булмера (маска поиска)
+# иницилизация самый ранний файл csv в каталоге булмера (маска поиска)
 bullmer_log_folder_filter = "c:\\TEMP\*.csv"
+
+# инициализация названия булмера
+bullmer_db_log_name = ""
+
+# инициализация точки входа для получение сверел с бд
+drills_db = "http://10.55.128.67:5000/cutting/drills"
+
+# Создаем пустой DataFrame
+dfglobal = pd.DataFrame()
 
 
 # функция, строит массив из сверел (два элемента). Сверла, вынутые с селектора
@@ -37,29 +42,51 @@ def comparison(lcd1, lcd2):
         return 0
 
 
-# функция, которая проверяет лог
-def logchk():
-    # возвращаем саммый ранний файл csv в каталоге логов
-    list_of_files = glob.glob(
-        bullmer_log_folder_filter
-    )  # * means all if need specific format then *.csv
-    latest_file = max(list_of_files, key=os.path.getctime)
-    print(latest_file)
-
-    # создаем датафрейм и выводим его в консоль
-    df = pd.read_csv(latest_file)
-    print(df.tail(1))
-
-
 async def main():
+    # функция, которая проверяет лог и стирает id раскладки из главного окна (тем самым делает его не скрытым)
+    def logchk():
+        # возвращаем самый ранний файл csv в каталоге логов
+        list_of_files = glob.glob(bullmer_log_folder_filter)
+        latest_file = max(list_of_files, key=os.path.getctime)
+        print(latest_file)
+
+        # создаем датафрейм и выводим его в консоль
+        columns = [
+            0,
+            17,
+            18,
+            20,
+            21,
+            10,
+            4,
+            14,
+            15,
+            37,
+            45,
+            46,
+            2,
+        ]
+
+        df1 = pd.read_csv(latest_file, sep=";", usecols=columns)
+        df1.drop(index=df1.index[-1], axis=0, inplace=True)
+        global dfglobal
+
+        if dfglobal.equals(df1):
+            print("Файл совпадает")
+
+        else:
+            # если произошла запись в логи, то будет выполняться эта часть. Сюда нужно вставить http post в БД Bullmer
+            dfglobal = df1.copy()
+            btn_clk()
+            print("Файл не совпадает")
+
     # эта функция срабатывает при нажатии кнопки "Очистить"
     def btn_clk():
-        print("Button clicked")
         form.lineEdit.clear()
 
     # эта функция срабатывает при изменении текста в поле id раскладки
     def ln_changed():
-        url = "http://10.55.128.67:5000/cutting/drills"
+        url = drills_db
         myobj = {"markerID": form.lineEdit.text()}
         try:
             x = requests.get(url, myobj)
@@ -134,6 +161,8 @@ async def main():
 
     # настраиваем сценарий для элемента pushButton
     form.pushButton.clicked.connect(btn_clk)
+
+    # настраиваем сценарий для элемента lineEdit
     form.lineEdit.textChanged.connect(ln_changed)
 
     # обновление строки с ардуино и lcd окон на интерфейсе
@@ -141,9 +170,10 @@ async def main():
     timer1.timeout.connect(read_serial_arduino)  # connect it to your update function
     timer1.start(1000)  # set it to timeout in 5000 ms
 
-    # проверяем изменился ли файл
-    fs_watcher = QtCore.QFileSystemWatcher([bullmer_log_folder])
-    fs_watcher.directoryChanged.connect(logchk)
+    # обновление строки с ардуино и lcd окон на интерфейсе
+    timer2 = QtCore.QTimer()  # set up your QTimer
+    timer2.timeout.connect(logchk)  # connect it to your update function
+    timer2.start(1000)  # set it to timeout in 5000 ms
 
     # запускаем окно программы
     app.exec()
