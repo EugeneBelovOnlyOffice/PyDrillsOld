@@ -138,19 +138,23 @@ async def main():
                     form.lcdNumber_2.display(drills[indices[1]])
                 except IndexError:
                     form.lcdNumber_2.display(None)
+
+                    # запускаем функцию сравнения значений селектора и базы. Управляем окном.
+                if comparison(
+                    form.lcdNumber.value(), form.lcdNumber_3.value()
+                ) and comparison(
+                    form.lcdNumber_2.value(),
+                    form.lcdNumber_4.value() and form.lcdNumber_2.value(),
+                ):
+                    window.hide()
+                    return 1
+                else:
+                    window.show()
+                    return 0
+
             else:
                 form.lcdNumber.display(None)
                 form.lcdNumber_2.display(None)
-
-        # запускаем функцию сравнения значений селектора и базы. Управляем окном.
-        if comparison(form.lcdNumber.value(), form.lcdNumber_3.value()) and comparison(
-            form.lcdNumber_2.value(), form.lcdNumber_4.value()
-        ):
-            window.hide()
-            return 1
-        else:
-            window.show()
-            return 0
 
     # подключаем файл, полученный в QtDesigner
     Form, Window = uic.loadUiType("interface.ui")
