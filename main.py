@@ -8,6 +8,7 @@ import requests
 import glob
 import os
 import pandas as pd
+import json
 
 # иницилизация порта Ардуино
 ser = serial.Serial()
@@ -24,6 +25,9 @@ bullmer_db_log_name = ""
 
 # инициализация точки входа для получение сверел с бд
 drills_db = "http://10.55.128.67:5000/cutting/drills"
+
+# инициализация точки входа отправки изменений в логе(статистики) в бд
+blogs_db = "http://10.55.128.67:5000"
 
 # Создаем пустой DataFrame
 dfglobal = pd.DataFrame()
@@ -73,12 +77,32 @@ async def main():
 
         if dfglobal.equals(df1):
             print("Файл совпадает")
+            print(dfglobal.tail(1).loc(0))
 
         else:
             # если произошла запись в логи, то будет выполняться эта часть. Сюда нужно вставить http post в БД Bullmer
             dfglobal = df1.copy()
             btn_clk()
             print("Файл не совпадает")
+
+            # этот запрос отправляет данные на сервер. пишет статистику Булмер в базу
+
+            data = {
+                "cutter": bullmer_db_log_name,
+                # Bild: "string",
+                # DStart: "string",
+                # DEnde: "string",
+                # JOB: "number",
+                # CUT: "number",
+                # Bite: "number",
+                # Neben: "number",
+                # idRask: "string",
+                # Drills: "number",
+                # Hdrills: "number",
+            }
+            # json_data = json.dumps(data)
+            # response = requests.post(blogs_db, data=json_data)
+            # print(response.text)
 
     # эта функция срабатывает при нажатии кнопки "Очистить"
     def btn_clk():
