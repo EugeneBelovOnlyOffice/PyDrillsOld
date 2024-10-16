@@ -9,6 +9,8 @@ import glob
 import os
 import pandas as pd
 import json
+import sqlite3
+from datetime import datetime
 
 # иницилизация порта Ардуино
 ser = serial.Serial()
@@ -17,11 +19,14 @@ ser.port = "COM6"
 ser.open()
 time.sleep(2)
 
+# иницилизация имени базы SQLite
+bullmer_sqlite_db = "bullmersqlite.db"
+
 # иницилизация самый ранний файл csv в каталоге булмера (маска поиска)
 bullmer_log_folder_filter = "c:\\TEMP\*.csv"
 
 # инициализация названия булмера
-bullmer_db_log_name = ""
+bullmer_db_log_name = "Log2"
 
 # инициализация точки входа для получение сверел с бд
 drills_db = "http://10.55.128.67:5000/cutting/drills"
@@ -47,6 +52,36 @@ def comparison(lcd1, lcd2):
 
 
 async def main():
+    def sqlite_get(db):
+        # Устанавливаем соединение с базой данных
+        connection = sqlite3.connect(db)
+        cursor = connection.cursor()
+        cursor.execute("SELECT marker_id FROM idRasks order by datetime desc limit 1")
+        return print(type(cursor.fetchall()[0]))
+
+    def sqlite_post(marker_id, db):
+        # Устанавливаем соединение с базой данных
+        connection = sqlite3.connect(db)
+        cursor = connection.cursor()
+
+        # Создаем таблицу раскладок в sqlite
+        cursor.execute(
+            "CREATE TABLE IF NOT EXISTS idRasks (id INTEGER PRIMARY KEY, marker_id TEXT, datetime TEXT)"
+        )
+
+        # Сохраняем изменения
+        connection.commit()
+
+        if marker_id != "":
+            cursor.execute(
+                "INSERT INTO idRasks (marker_id, datetime) VALUES (?,?)",
+                (marker_id, datetime.now().strftime("%Y.%m.%d %H:%M:%S")),
+            )
+
+            # Сохраняем изменения
+            connection.commit()
+        connection.close()
+
     # функция, которая проверяет лог и стирает id раскладки из главного окна (тем самым делает его не скрытым)
     def logchk():
         # возвращаем самый ранний файл csv в каталоге логов
@@ -62,7 +97,7 @@ async def main():
             20,
             21,
             10,
-            4,
+            11,
             14,
             15,
             37,
@@ -77,7 +112,7 @@ async def main():
 
         if dfglobal.equals(df1):
             print("Файл совпадает")
-            print(dfglobal.tail(1).loc(0))
+            sqlite_get(bullmer_sqlite_db)
 
         else:
             # если произошла запись в логи, то будет выполняться эта часть. Сюда нужно вставить http post в БД Bullmer
@@ -85,20 +120,26 @@ async def main():
             btn_clk()
             print("Файл не совпадает")
 
-            # этот запрос отправляет данные на сервер. пишет статистику Булмер в базу
+            # этот запрос отправляет данные на сервер. пишет статистику Булмер в базу. Нужно преобразовать в корректный тип данных
 
             data = {
-                "cutter": bullmer_db_log_name,
-                # Bild: "string",
-                # DStart: "string",
-                # DEnde: "string",
-                # JOB: "number",
-                # CUT: "number",
-                # Bite: "number",
-                # Neben: "number",
-                # idRask: "string",
-                # Drills: "number",
-                # Hdrills: "number",
+                "cutter": bullmer_db_log_name,  # string
+                "Bild": dfglobal.loc[
+                    len(dfglobal) - 1, "Bild                "
+                ],  # string
+                "DStart": dfglobal.loc[len(dfglobal) - 1, "Start    .1"]
+                + " "
+                + dfglobal.loc[len(dfglobal) - 1, "Start    "],  # string
+                "DEnde": dfglobal.loc[len(dfglobal) - 1, "Ende     .1"]
+                + " "
+                + dfglobal.loc[len(dfglobal) - 1, "Ende     "],  # string
+                "JOB": dfglobal.loc[len(dfglobal) - 1, "JOB[min]"],  # number
+                "CUT": dfglobal.loc[len(dfglobal) - 1, "CUT[min]"],  # number
+                "Bite": dfglobal.loc[len(dfglobal) - 1, "Bite[min]"],  # number
+                "Neben": dfglobal.loc[len(dfglobal) - 1, "Neben[min]"],  # number
+                # idRask: "string", #string, данные в SQLite
+                # Drills: "number", #number, данные в SQL (получаем запросом post)
+                "Hdrills": None,  # number
             }
             # json_data = json.dumps(data)
             # response = requests.post(blogs_db, data=json_data)
@@ -123,6 +164,9 @@ async def main():
         except:
             form.lcdNumber_3.display(None)
             form.lcdNumber_4.display(None)
+
+        # записывает отсканированную раскладку в sqlite
+        sqlite_post(form.lineEdit.text(), bullmer_sqlite_db)
 
     # эта функция получает строку с ардуино и вносит значения в интерфейс
     def read_serial_arduino():
