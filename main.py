@@ -12,6 +12,7 @@ import json
 import sqlite3
 from datetime import datetime
 
+#############################################################################################
 # иницилизация порта Ардуино
 ser = serial.Serial()
 ser.baudrate = 9600
@@ -26,7 +27,7 @@ bullmer_sqlite_db = "bullmersqlite.db"
 bullmer_log_folder_filter = "c:\\TEMP\*.csv"
 
 # инициализация названия булмера
-bullmer_db_log_name = "Log2"
+bullmer_db_log_name = "2"
 
 # инициализация точки входа для получение сверел с бд
 drills_db = "http://10.55.128.67:5000/cutting/drills"
@@ -34,6 +35,9 @@ drills_db = "http://10.55.128.67:5000/cutting/drills"
 # инициализация точки входа отправки изменений в логе(статистики) в бд
 blogs_db = "http://10.55.128.67:5000"
 
+# инициализация точки входа отправки текущей и предидущей раскладок в базу экрана раскроя
+current_db = "http://10.55.128.67:5000"
+##############################################################################################
 # Создаем пустой DataFrame
 dfglobal = pd.DataFrame()
 
@@ -52,13 +56,23 @@ def comparison(lcd1, lcd2):
 
 
 async def main():
+    # функция получает id последней раскладки из sqlite
     def sqlite_get(db):
         # Устанавливаем соединение с базой данных
         connection = sqlite3.connect(db)
         cursor = connection.cursor()
-        cursor.execute("SELECT marker_id FROM idRasks order by datetime desc limit 1")
-        return print(type(cursor.fetchall()[0]))
+        cursor.execute("SELECT marker_id FROM idRasks order by id desc limit 1")
+        return str(cursor.fetchall()[0])[:-2][1:]
 
+    # функция получает две последние раскладки (id) из sqlite для отображения на ТВ
+    def sqlite_get_last_two_records(db):
+        # Устанавливаем соединение с базой данных
+        connection = sqlite3.connect(db)
+        cursor = connection.cursor()
+        cursor.execute("SELECT marker_id FROM idRasks order by id desc limit 2")
+        return cursor.fetchall()
+
+    # функция отправляет данные раскладки в sqlite
     def sqlite_post(marker_id, db):
         # Устанавливаем соединение с базой данных
         connection = sqlite3.connect(db)
@@ -75,7 +89,7 @@ async def main():
         if marker_id != "":
             cursor.execute(
                 "INSERT INTO idRasks (marker_id, datetime) VALUES (?,?)",
-                (marker_id, datetime.now().strftime("%Y.%m.%d %H:%M:%S")),
+                (marker_id, datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
             )
 
             # Сохраняем изменения
@@ -112,7 +126,6 @@ async def main():
 
         if dfglobal.equals(df1):
             print("Файл совпадает")
-            sqlite_get(bullmer_sqlite_db)
 
         else:
             # если произошла запись в логи, то будет выполняться эта часть. Сюда нужно вставить http post в БД Bullmer
@@ -120,30 +133,38 @@ async def main():
             btn_clk()
             print("Файл не совпадает")
 
-            # этот запрос отправляет данные на сервер. пишет статистику Булмер в базу. Нужно преобразовать в корректный тип данных
-
+            # этот запрос отправляет данные на сервер. пишет статистику Булмер в базу
             data = {
-                "cutter": bullmer_db_log_name,  # string
-                "Bild": dfglobal.loc[
-                    len(dfglobal) - 1, "Bild                "
-                ],  # string
-                "DStart": dfglobal.loc[len(dfglobal) - 1, "Start    .1"]
-                + " "
-                + dfglobal.loc[len(dfglobal) - 1, "Start    "],  # string
-                "DEnde": dfglobal.loc[len(dfglobal) - 1, "Ende     .1"]
-                + " "
-                + dfglobal.loc[len(dfglobal) - 1, "Ende     "],  # string
-                "JOB": dfglobal.loc[len(dfglobal) - 1, "JOB[min]"],  # number
-                "CUT": dfglobal.loc[len(dfglobal) - 1, "CUT[min]"],  # number
-                "Bite": dfglobal.loc[len(dfglobal) - 1, "Bite[min]"],  # number
-                "Neben": dfglobal.loc[len(dfglobal) - 1, "Neben[min]"],  # number
-                # idRask: "string", #string, данные в SQLite
-                # Drills: "number", #number, данные в SQL (получаем запросом post)
-                "Hdrills": None,  # number
+                "data": {
+                    "cutter": bullmer_db_log_name,  # number
+                    "Bild": dfglobal.loc[
+                        len(dfglobal) - 1, "Bild                "
+                    ].lstrip(),  # string
+                    "DStart": dfglobal.loc[len(dfglobal) - 1, "Start    .1"].rstrip()
+                    + " "
+                    + dfglobal.loc[len(dfglobal) - 1, "Start    "].rstrip(),  # string
+                    "DEnde": dfglobal.loc[len(dfglobal) - 1, "Ende     .1"].rstrip()
+                    + " "
+                    + dfglobal.loc[len(dfglobal) - 1, "Ende     "].rstrip(),  # string
+                    "JOB": dfglobal.loc[
+                        len(dfglobal) - 1, "JOB[min]"
+                    ].lstrip(),  # number
+                    "CUT": dfglobal.loc[
+                        len(dfglobal) - 1, "CUT[min]"
+                    ].lstrip(),  # number
+                    "Bite": dfglobal.loc[
+                        len(dfglobal) - 1, "Bite[min]"
+                    ].lstrip(),  # number
+                    "Neben": str(
+                        dfglobal.loc[len(dfglobal) - 1, "Neben[min]"]
+                    ).lstrip(),  # number
+                    "idRask": sqlite_get(bullmer_sqlite_db),  # string, данные в SQLite
+                    "Drills": None,  # number
+                    "Hdrills": None,  # number
+                }
             }
-            # json_data = json.dumps(data)
-            # response = requests.post(blogs_db, data=json_data)
-            # print(response.text)
+            json_data = json.dumps(data)
+            requests.post(blogs_db, data=json_data)
 
     # эта функция срабатывает при нажатии кнопки "Очистить"
     def btn_clk():
@@ -167,6 +188,23 @@ async def main():
 
         # записывает отсканированную раскладку в sqlite
         sqlite_post(form.lineEdit.text(), bullmer_sqlite_db)
+
+        # записываем текущую и предыдущую раскладки в sql бд Bullmer.current
+        url = current_db
+        data = {
+            "data": {
+                "idrask": str(sqlite_get_last_two_records(bullmer_sqlite_db)[0])[:-2][
+                    1:
+                ],  # string
+                "idraspost": str(sqlite_get_last_two_records(bullmer_sqlite_db)[1])[
+                    :-2
+                ][1:],  # string
+                "komp": "Bullmer" + str(bullmer_db_log_name),  # string
+            }
+        }
+        json_data = json.dumps(data)
+        print(json_data)
+        requests.post(blogs_db, data=json_data)
 
     # эта функция получает строку с ардуино и вносит значения в интерфейс
     def read_serial_arduino():
