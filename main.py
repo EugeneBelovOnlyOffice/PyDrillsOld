@@ -12,6 +12,7 @@ import json
 import sqlite3
 from datetime import datetime
 
+
 #############################################################################################
 # иницилизация порта Ардуино
 ser = serial.Serial()
@@ -38,8 +39,31 @@ blogs_db = "http://10.55.128.67:5000"
 # инициализация точки входа отправки текущей и предидущей раскладок в базу экрана раскроя
 current_db = "http://10.55.128.67:5000"
 ##############################################################################################
-# Создаем пустой DataFrame
-dfglobal = pd.DataFrame()
+
+
+# возвращаем самый ранний файл csv в каталоге логов
+list_of_files = glob.glob(bullmer_log_folder_filter)
+latest_file = max(list_of_files, key=os.path.getctime)
+
+# создаем датафрейм и выводим его в консоль
+columns = [
+    0,
+    17,
+    18,
+    20,
+    21,
+    10,
+    11,
+    14,
+    15,
+    37,
+    45,
+    46,
+    2,
+]
+# Создаем глобальный DataFrame
+dfglobal = pd.read_csv(latest_file, sep=";", usecols=columns)
+dfglobal.drop(index=dfglobal.index[-1], axis=0, inplace=True)
 
 
 # функция, строит массив из сверел (два элемента). Сверла, вынутые с селектора
@@ -203,7 +227,7 @@ async def main():
             }
         }
         json_data = json.dumps(data)
-        print(json_data)
+
         requests.post(blogs_db, data=json_data)
 
     # эта функция получает строку с ардуино и вносит значения в интерфейс
