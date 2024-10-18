@@ -11,6 +11,7 @@ import pandas as pd
 import json
 import sqlite3
 from datetime import datetime
+from pywinauto.application import Application
 
 
 #############################################################################################
@@ -70,6 +71,10 @@ columns = [
 dfglobal = pd.read_csv(latest_file, sep=";", usecols=columns)
 dfglobal.drop(index=dfglobal.index[-1], axis=0, inplace=True)
 ##############################################################################################
+
+
+def nextgen_clicker():
+    app = Application(backend="uia").start(r"C:\Program Files\PuTTY\putty.exe")
 
 
 # функция, строит массив из сверел (два элемента). Сверла, вынутые с селектора
@@ -162,6 +167,7 @@ async def main():
             dfglobal = df1.copy()
             btn_clk()
             print("Файл не совпадает")
+            nextgen_clicker()
 
             # этот запрос отправляет данные на сервер. пишет статистику Булмер в базу
             data = {
