@@ -1,3 +1,4 @@
+import tkinter.messagebox
 import serial
 import asyncio
 import time
@@ -12,6 +13,8 @@ import json
 import sqlite3
 from datetime import datetime
 from pywinauto.application import Application
+import pywinauto
+import tkinter
 
 
 #############################################################################################
@@ -42,7 +45,9 @@ blogs_db = "http://10.55.128.67:5000"
 
 # инициализация точки входа отправки текущей и предидущей раскладок в базу экрана раскроя
 current_db = "http://10.55.128.67:5000"
-##############################################################################################
+
+# инициализация ЧАСТИ строки названия nextgen - влияет на поиск окна nextgen, чтобы нажать клавишу редактора
+nextgen_name = "PuTTY Config"
 
 
 # Создаем глобальный DataFrame
@@ -73,8 +78,22 @@ dfglobal.drop(index=dfglobal.index[-1], axis=0, inplace=True)
 ##############################################################################################
 
 
+# эта функция кликает по кнопке в nextgen
 def nextgen_clicker():
-    app = Application(backend="uia").start(r"C:\Program Files\PuTTY\putty.exe")
+    # app = Application(backend="uia").start(r"C:\Program Files\PuTTY\putty.exe")
+    # app = Application(backend="uia").connect(best_match="PuTTY", timeout=100)
+    # app.PuTTYConfiguration.print_control_identifiers()
+    try:
+        handle = pywinauto.findwindows.find_window(
+            best_match=nextgen_name
+        )  # здесь мы ищем наиболее подходящее окно по названию
+
+        app = pywinauto.application.Application(backend="uia").connect(
+            handle=handle, timeout=100
+        )
+        app.Dialog.About.click()
+    except:
+        tkinter.messagebox.showerror("Запустите NextGen")
 
 
 # функция, строит массив из сверел (два элемента). Сверла, вынутые с селектора
@@ -82,9 +101,10 @@ def get_indices(element, lst):
     return [i for i in range(len(lst)) if lst[i] == element]
 
 
-# функция, сравнивает показания селектра и базы.
+# функция, сравнивает показания селектра и базы, так же сюда передаем функцию запуска редактора nextgen.
 def comparison(lcd1, lcd2):
     if lcd1 == lcd2:
+        # запускаем редактор в NextGen
         return 1
     else:
         return 0
@@ -167,7 +187,6 @@ async def main():
             dfglobal = df1.copy()
             btn_clk()
             print("Файл не совпадает")
-            nextgen_clicker()
 
             # этот запрос отправляет данные на сервер. пишет статистику Булмер в базу
             data = {
@@ -218,6 +237,7 @@ async def main():
             form.lcdNumber_4.display(x.json().get(("Сверло2", None)))
             print(x.json().get("Сверло1", None))
             print(x.json().get(("Сверло2", None)))
+            nextgen_clicker()  # если раскладка найдена в базе - запускаем редактор NextGen
         except:
             form.lcdNumber_3.display(None)
             form.lcdNumber_4.display(None)

@@ -170,7 +170,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Сверло селектора 1</string>
+     <string>Сверло селектора 2</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_7">
