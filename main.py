@@ -14,7 +14,7 @@ import sqlite3
 from datetime import datetime
 from pywinauto.application import Application
 import pywinauto
-import tkinter
+import tkinter as tk
 
 
 #############################################################################################
@@ -35,7 +35,7 @@ bullmer_sqlite_db = "bullmersqlite.db"
 bullmer_log_folder_filter = "c:\\TEMP\*.csv"
 
 # инициализация названия булмера
-bullmer_db_log_name = "2"
+bullmer_db_log_name = "3"
 
 # инициализация точки входа для получение сверел с бд
 drills_db = "http://10.55.128.67:5000/cutting/drills"
@@ -93,7 +93,9 @@ def nextgen_clicker():
         )
         app.Dialog.About.click()
     except:
-        tkinter.messagebox.showerror("Запустите NextGen")
+        root = tk.Tk()
+        root.withdraw()
+        tkinter.messagebox.showerror(title="NextGen", message="Запустите NextGen")
 
 
 # функция, строит массив из сверел (два элемента). Сверла, вынутые с селектора
