@@ -2,9 +2,9 @@ import tkinter.messagebox
 import serial
 import asyncio
 import time
-from PyQt6 import uic
-from PyQt6.QtWidgets import QApplication, QMainWindow, QPushButton, QWidget
-from PyQt6 import QtCore
+from PyQt5 import uic
+from PyQt5.QtWidgets import QApplication
+from PyQt5 import QtCore
 import requests
 import glob
 import os
@@ -12,7 +12,6 @@ import pandas as pd
 import json
 import sqlite3
 from datetime import datetime
-from pywinauto.application import Application
 import pywinauto
 import tkinter as tk
 
@@ -81,7 +80,7 @@ dfglobal.drop(index=dfglobal.index[-1], axis=0, inplace=True)
 # эта функция кликает по кнопке в nextgen
 def nextgen_clicker():
     # app = Application(backend="uia").start(r"C:\Program Files\PuTTY\putty.exe")
-    # app = Application(backend="uia").connect(best_match="PuTTY", timeout=100)
+    # a pp = Application(backend="uia").connect(best_match="PuTTY", timeout=100)
     # app.PuTTYConfiguration.print_control_identifiers()
     try:
         handle = pywinauto.findwindows.find_window(
