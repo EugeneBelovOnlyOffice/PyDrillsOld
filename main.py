@@ -14,6 +14,7 @@ import sqlite3
 from datetime import datetime
 import pywinauto
 import tkinter as tk
+import warnings
 
 
 #############################################################################################
@@ -102,10 +103,9 @@ def get_indices(element, lst):
     return [i for i in range(len(lst)) if lst[i] == element]
 
 
-# функция, сравнивает показания селектра и базы, так же сюда передаем функцию запуска редактора nextgen.
+# функция, сравнивает показания селектра и базы
 def comparison(lcd1, lcd2):
     if lcd1 == lcd2:
-        # запускаем редактор в NextGen
         return 1
     else:
         return 0
@@ -165,7 +165,7 @@ async def main():
         # возвращаем самый ранний файл csv в каталоге логов
         list_of_files = glob.glob(bullmer_log_folder_filter)
         latest_file = max(list_of_files, key=os.path.getctime)
-        print(latest_file)
+        # print(latest_file)
 
         # создаем датафрейм и выводим его в консоль
         columns = [
@@ -189,7 +189,7 @@ async def main():
         global dfglobal
 
         if dfglobal.equals(df1):
-            print("Файл совпадает")
+            pass  # "Файл совпадает"
 
         else:
             # если произошла запись в логи, то будет выполняться эта часть. Сюда нужно вставить http post в БД Bullmer
@@ -283,7 +283,12 @@ async def main():
     # эта функция получает строку с ардуино и вносит значения в интерфейс
     def read_serial_arduino():
         ser.write(b"1")
-        asyncio.sleep(0.1)
+
+        # убираем ворнинги от asyncio
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            asyncio.sleep(0.1)
+
         while ser.in_waiting:
             arduinostring = ser.readline().decode("utf-8")[:-2]
             form.label_3.setText(arduinostring)
