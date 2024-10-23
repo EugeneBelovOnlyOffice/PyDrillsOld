@@ -46,7 +46,7 @@ blogs_db = "http://10.55.128.67:5000"
 current_db = "http://10.55.128.67:5000"
 
 # инициализация ЧАСТИ строки названия nextgen - влияет на поиск окна nextgen, чтобы нажать клавишу редактора
-nextgen_name = "PuTTY Config"
+nextgen_name = "NextGeneration R7.8.1"  # или "Nextgen 8.3.0"
 
 
 # Создаем глобальный DataFrame
@@ -118,6 +118,14 @@ async def main():
         connection = sqlite3.connect(db)
         cursor = connection.cursor()
         cursor.execute("SELECT marker_id FROM idRasks order by id desc limit 1")
+        return str(cursor.fetchall()[0])[:-2][1:]
+
+    # функция получает время последней раскладки из sqlite
+    def sqlite_get_time(db):
+        # Устанавливаем соединение с базой данных
+        connection = sqlite3.connect(db)
+        cursor = connection.cursor()
+        cursor.execute("SELECT datetime FROM idRasks order by id desc limit 1")
         return str(cursor.fetchall()[0])[:-2][1:]
 
     # функция получает две последние раскладки (id) из sqlite для отображения на ТВ
@@ -242,6 +250,15 @@ async def main():
         except:
             form.lcdNumber_3.display(None)
             form.lcdNumber_4.display(None)
+
+        # проверяем, сканировали ли мы эту раскладку ранее (проверяем последнюю запись в SQLite). Если да, выводим worning
+        if sqlite_get(bullmer_sqlite_db) == form.lineEdit.text():
+            root = tk.Tk()
+            root.withdraw()
+            tkinter.messagebox.showwarning(
+                title="SQLite",
+                message="Уже сканировали " + sqlite_get_time(bullmer_sqlite_db),
+            )
 
         # записывает отсканированную раскладку в sqlite
         sqlite_post(form.lineEdit.text(), bullmer_sqlite_db)

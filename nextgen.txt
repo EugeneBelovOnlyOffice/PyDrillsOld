@@ -1,0 +1,839 @@
+Control Identifiers:
+
+Dialog - 'NextGeneration R7.8.1, 28.05.2018, 08:59:27 - [W:\iso\HV-L-RR-V3_V1.GBR]'    (L-8, T-8, R1928, B1048)
+['NextGeneration R7.8.1, 28.05.2018, 08:59:27 - [W:\\iso\\HV-L-RR-V3_V1.GBR]Dialog', 'NextGeneration R7.8.1, 28.05.2018, 08:59:27 - [W:\\iso\\HV-L-RR-V3_V1.GBR]', 'Dialog', 'Dialog0', 'Dialog1']
+child_window(title="NextGeneration R7.8.1, 28.05.2018, 08:59:27 - [W:\iso\HV-L-RR-V3_V1.GBR]", control_type="Window")
+   | 
+   | Dialog - 'Редактирование списка заданий'    (L-10, T480, R796, B896)
+   | ['Редактирование списка заданийDialog', 'Редактирование списка заданий', 'Dialog2']
+   | child_window(title="Редактирование списка заданий", control_type="Window")
+   |    | 
+   |    | Pane - 'frame5'    (L9, T577, R472, B851)
+   |    | ['frame5Pane', 'frame5', 'Pane', 'Pane0', 'Pane1', 'frame5Pane0', 'frame5Pane1', 'frame50', 'frame51']
+   |    | child_window(title="frame5", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'splitter3'    (L20, T588, R461, B840)
+   |    |    | ['splitter3', 'Pane2', 'splitter3Pane']
+   |    |    | child_window(title="splitter3", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'qt_splithandle_itsFileListFrame'    (L260, T588, R266, B840)
+   |    |    |    | ['Pane3', 'qt_splithandle_itsFileListFramePane', 'qt_splithandle_itsFileListFrame']
+   |    |    |    | child_window(title="qt_splithandle_itsFileListFrame", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'itsFileListFrame'    (L266, T588, R461, B840)
+   |    |    |    | ['itsFileListFramePane', 'Pane4', 'itsFileListFrame']
+   |    |    |    | child_window(title="itsFileListFrame", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'itsRefreshButton'    (L381, T816, R456, B834)
+   |    |    |    |    | ['itsRefreshButton', 'itsRefreshButtonPane', 'Pane5']
+   |    |    |    |    | child_window(title="itsRefreshButton", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'itsFileList'    (L266, T588, R461, B810)
+   |    |    |    |    | ['itsFileListPane', 'itsFileList', 'Pane6']
+   |    |    |    |    | child_window(title="itsFileList", control_type="Pane")
+   |    |    |    |    |    | 
+   |    |    |    |    |    | Pane - 'unnamed'    (L272, T640, R455, B804)
+   |    |    |    |    |    | ['unnamedPane', 'Pane7', 'unnamed', 'unnamedPane0', 'unnamedPane1', 'unnamed0', 'unnamed1']
+   |    |    |    |    |    | child_window(title="unnamed", control_type="Pane")
+   |    |    |    |    |    |    | 
+   |    |    |    |    |    |    | Pane - 'qt_viewport'    (L274, T642, R436, B785)
+   |    |    |    |    |    |    | ['Pane8', 'qt_viewport', 'qt_viewportPane', 'qt_viewport0', 'qt_viewport1', 'qt_viewportPane0', 'qt_viewportPane1']
+   |    |    |    |    |    |    | child_window(title="qt_viewport", control_type="Pane")
+   |    |    |    |    |    |    | 
+   |    |    |    |    |    |    | Pane - 'qt_vbar'    (L436, T642, R453, B785)
+   |    |    |    |    |    |    | ['Pane9', 'qt_vbarPane', 'qt_vbar', 'qt_vbarPane0', 'qt_vbarPane1', 'qt_vbar0', 'qt_vbar1']
+   |    |    |    |    |    |    | child_window(title="qt_vbar", control_type="Pane")
+   |    |    |    |    |    |    | 
+   |    |    |    |    |    |    | Pane - 'qt_hbar'    (L274, T785, R436, B802)
+   |    |    |    |    |    |    | ['qt_hbarPane', 'qt_hbar', 'Pane10', 'qt_hbarPane0', 'qt_hbarPane1', 'qt_hbar0', 'qt_hbar1']
+   |    |    |    |    |    |    | child_window(title="qt_hbar", control_type="Pane")
+   |    |    |    |    |    | 
+   |    |    |    |    |    | Pane - 'unnamed'    (L272, T614, R455, B634)
+   |    |    |    |    |    | ['unnamedPane2', 'Pane11', 'unnamed2']
+   |    |    |    |    |    | child_window(title="unnamed", control_type="Pane")
+   |    |    |    |    |    | 
+   |    |    |    |    |    | Pane - 'unnamed'    (L272, T594, R455, B608)
+   |    |    |    |    |    | ['unnamedPane3', 'Pane12', 'unnamed3']
+   |    |    |    |    |    | child_window(title="unnamed", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'layout7'    (L20, T588, R260, B840)
+   |    |    |    | ['layout7', 'Pane13', 'layout7Pane']
+   |    |    |    | child_window(title="layout7", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'itsDirectory'    (L31, T599, R249, B829)
+   |    |    |    |    | ['itsDirectoryPane', 'Pane14', 'itsDirectory']
+   |    |    |    |    | child_window(title="itsDirectory", control_type="Pane")
+   |    |    |    |    |    | 
+   |    |    |    |    |    | Pane - 'qt_vbar'    (L230, T601, R247, B810)
+   |    |    |    |    |    | ['Pane15', 'qt_vbarPane2', 'qt_vbar2']
+   |    |    |    |    |    | child_window(title="qt_vbar", control_type="Pane")
+   |    |    |    |    |    | 
+   |    |    |    |    |    | Pane - 'list view header'    (L33, T601, R230, B621)
+   |    |    |    |    |    | ['list view header', 'Pane16', 'list view headerPane', 'list view header0', 'list view header1', 'list view headerPane0', 'list view headerPane1']
+   |    |    |    |    |    | child_window(title="list view header", control_type="Pane")
+   |    |    |    |    |    | 
+   |    |    |    |    |    | Pane - 'qt_viewport'    (L33, T621, R230, B810)
+   |    |    |    |    |    | ['Pane17', 'qt_viewport2', 'qt_viewportPane2']
+   |    |    |    |    |    | child_window(title="qt_viewport", control_type="Pane")
+   |    |    |    |    |    | 
+   |    |    |    |    |    | Pane - 'qt_hbar'    (L33, T810, R230, B827)
+   |    |    |    |    |    | ['qt_hbarPane2', 'qt_hbar2', 'Pane18']
+   |    |    |    |    |    | child_window(title="qt_hbar", control_type="Pane")
+   |    | 
+   |    | Pane - 'itsJobQueueMod'    (L9, T521, R472, B571)
+   |    | ['itsJobQueueMod', 'Pane19', 'itsJobQueueModPane']
+   |    | child_window(title="itsJobQueueMod", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsParallelMod'    (L355, T541, R461, B560)
+   |    |    | ['itsParallelMod', 'itsParallelModPane', 'Pane20']
+   |    |    | child_window(title="itsParallelMod", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsMultiMod'    (L244, T541, R349, B560)
+   |    |    | ['Pane21', 'itsMultiModPane', 'itsMultiMod']
+   |    |    | child_window(title="itsMultiMod", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsStepMod'    (L132, T541, R238, B560)
+   |    |    | ['itsStepMod', 'itsStepModPane', 'Pane22']
+   |    |    | child_window(title="itsStepMod", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsSingleMod'    (L20, T541, R126, B560)
+   |    |    | ['itsSingleModPane', 'itsSingleMod', 'Pane23']
+   |    |    | child_window(title="itsSingleMod", control_type="Pane")
+   |    | 
+   |    | Pane - 'itsCloseButton'    (L722, T858, R777, B876)
+   |    | ['itsCloseButtonPane', 'itsCloseButton', 'Pane24']
+   |    | child_window(title="itsCloseButton", control_type="Pane")
+   |    | 
+   |    | Pane - 'itsBarCodeMode'    (L626, T858, R716, B876)
+   |    | ['itsBarCodeMode', 'Pane25', 'itsBarCodeModePane']
+   |    | child_window(title="itsBarCodeMode", control_type="Pane")
+   |    | 
+   |    | Pane - 'itsJobPara'    (L478, T521, R777, B851)
+   |    | ['itsJobPara', 'itsJobParaPane', 'Pane26']
+   |    | child_window(title="itsJobPara", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsDistanceDim'    (L742, T659, R766, B679)
+   |    |    | ['itsDistanceDim', 'itsDistanceDimPane', 'Pane27']
+   |    |    | child_window(title="itsDistanceDim", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsRotate'    (L489, T820, R679, B839)
+   |    |    | ['itsRotatePane', 'Pane28', 'itsRotate']
+   |    |    | child_window(title="itsRotate", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsParaSetLabel'    (L489, T541, R736, B555)
+   |    |    | ['Pane29', 'itsParaSetLabel', 'itsParaSetLabelPane']
+   |    |    | child_window(title="itsParaSetLabel", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsJobAddButton'    (L711, T820, R766, B838)
+   |    |    | ['itsJobAddButtonPane', 'Pane30', 'itsJobAddButton']
+   |    |    | child_window(title="itsJobAddButton", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsChangeButton'    (L711, T793, R766, B811)
+   |    |    | ['itsChangeButton', 'itsChangeButtonPane', 'Pane31']
+   |    |    | child_window(title="itsChangeButton", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsDefaultButton'    (L711, T765, R766, B783)
+   |    |    | ['Pane32', 'itsDefaultButtonPane', 'itsDefaultButton']
+   |    |    | child_window(title="itsDefaultButton", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsMirrorX'    (L489, T765, R679, B784)
+   |    |    | ['itsMirrorX', 'itsMirrorXPane', 'Pane33']
+   |    |    | child_window(title="itsMirrorX", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsMirrorY'    (L489, T793, R679, B812)
+   |    |    | ['itsMirrorY', 'itsMirrorYPane', 'Pane34']
+   |    |    | child_window(title="itsMirrorY", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsTrackNumber'    (L555, T737, R625, B757)
+   |    |    | ['itsTrackNumber', 'itsTrackNumberPane', 'Pane35']
+   |    |    | child_window(title="itsTrackNumber", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsNumberLayer'    (L555, T711, R625, B731)
+   |    |    | ['itsNumberLayerPane', 'itsNumberLayer', 'Pane36']
+   |    |    | child_window(title="itsNumberLayer", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsSlopeStartID'    (L555, T685, R625, B705)
+   |    |    | ['itsSlopeStartID', 'Pane37', 'itsSlopeStartIDPane']
+   |    |    | child_window(title="itsSlopeStartID", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsDistance'    (L555, T659, R625, B679)
+   |    |    | ['itsDistance', 'Pane38', 'itsDistancePane']
+   |    |    | child_window(title="itsDistance", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsNumber'    (L555, T633, R625, B653)
+   |    |    | ['itsNumberPane', 'Pane39', 'itsNumber']
+   |    |    | child_window(title="itsNumber", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsDistanceLabel'    (L489, T659, R549, B679)
+   |    |    | ['Pane40', 'itsDistanceLabelPane', 'itsDistanceLabel']
+   |    |    | child_window(title="itsDistanceLabel", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsTrackNumberLabel'    (L489, T737, R549, B757)
+   |    |    | ['itsTrackNumberLabelPane', 'Pane41', 'itsTrackNumberLabel']
+   |    |    | child_window(title="itsTrackNumberLabel", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsNumberLayerLabel'    (L489, T711, R549, B731)
+   |    |    | ['Pane42', 'itsNumberLayerLabel', 'itsNumberLayerLabelPane']
+   |    |    | child_window(title="itsNumberLayerLabel", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsParameterSet'    (L489, T561, R736, B581)
+   |    |    | ['itsParameterSet', 'itsParameterSetPane', 'Pane43']
+   |    |    | child_window(title="itsParameterSet", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsParaSetButton'    (L742, T561, R762, B581)
+   |    |    | ['Pane44', 'itsParaSetButton', 'itsParaSetButtonPane']
+   |    |    | child_window(title="itsParaSetButton", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsJobIdent'    (L489, T607, R766, B627)
+   |    |    | ['itsJobIdent', 'itsJobIdentPane', 'Pane45']
+   |    |    | child_window(title="itsJobIdent", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsJobIdentLabel'    (L489, T587, R736, B601)
+   |    |    | ['itsJobIdentLabel', 'itsJobIdentLabelPane', 'Pane46']
+   |    |    | child_window(title="itsJobIdentLabel", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsNumberLabel'    (L489, T633, R549, B653)
+   |    |    | ['Pane47', 'itsNumberLabelPane', 'itsNumberLabel']
+   |    |    | child_window(title="itsNumberLabel", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsSlopeStartIDLabel'    (L489, T685, R549, B705)
+   |    |    | ['Pane48', 'itsSlopeStartIDLabel', 'itsSlopeStartIDLabelPane']
+   |    |    | child_window(title="itsSlopeStartIDLabel", control_type="Pane")
+   |    | 
+   |    | Pane - 'QDialog::resizer'    (L775, T875, R788, B888)
+   |    | ['QDialog::resizer', 'QDialog::resizerPane', 'Pane49']
+   |    | child_window(title="QDialog::resizer", control_type="Pane")
+   |    | 
+   |    | TitleBar - ''    (L14, T488, R788, B509)
+   |    | ['TitleBar', 'TitleBar0', 'TitleBar1']
+   |    |    | 
+   |    |    | Menu - 'Система'    (L-2, T488, R19, B509)
+   |    |    | ['Система', 'Menu', 'СистемаMenu', 'Система0', 'Система1', 'Menu0', 'Menu1', 'СистемаMenu0', 'СистемаMenu1']
+   |    |    | child_window(title="Система", control_type="MenuBar")
+   |    |    |    | 
+   |    |    |    | MenuItem - 'Система'    (L-2, T488, R19, B509)
+   |    |    |    | ['Система2', 'СистемаMenuItem', 'MenuItem', 'СистемаMenuItem0', 'СистемаMenuItem1', 'MenuItem0', 'MenuItem1']
+   |    |    |    | child_window(title="Система", control_type="MenuItem")
+   |    |    | 
+   |    |    | Button - 'Закрыть'    (L755, T490, R786, B507)
+   |    |    | ['Закрыть', 'ЗакрытьButton', 'Button', 'Button0', 'Button1', 'Закрыть0', 'Закрыть1', 'ЗакрытьButton0', 'ЗакрытьButton1']
+   |    |    | child_window(title="Закрыть", control_type="Button")
+   | 
+   | Pane - 'automatic menu bar'    (L0, T22, R1920, B46)
+   | ['automatic menu barPane', 'automatic menu bar', 'Pane50']
+   | child_window(title="automatic menu bar", control_type="Pane")
+   |    | 
+   |    | Pane - 'qt_maxcontrols'    (L1871, T27, R1921, B41)
+   |    | ['qt_maxcontrolsPane', 'qt_maxcontrols', 'Pane51']
+   |    | child_window(title="qt_maxcontrols", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'close'    (L1905, T27, R1921, B41)
+   |    |    | ['closePane', 'close', 'Pane52']
+   |    |    | child_window(title="close", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'restore'    (L1887, T27, R1903, B41)
+   |    |    | ['restore', 'Pane53', 'restorePane']
+   |    |    | child_window(title="restore", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'iconify'    (L1871, T27, R1887, B41)
+   |    |    | ['iconify', 'Pane54', 'iconifyPane']
+   |    |    | child_window(title="iconify", control_type="Pane")
+   |    | 
+   |    | Pane - 'qt_maxtools'    (L3, T27, R17, B41)
+   |    | ['qt_maxtools', 'qt_maxtoolsPane', 'Pane55']
+   |    | child_window(title="qt_maxtools", control_type="Pane")
+   | 
+   | Pane - 'automatic status bar'    (L0, T1019, R1920, B1040)
+   | ['automatic status bar', 'automatic status barPane', 'Pane56']
+   | child_window(title="automatic status bar", control_type="Pane")
+   |    | 
+   |    | Pane - 'itsStatusText1'    (L1852, T1022, R1915, B1038)
+   |    | ['itsStatusText1', 'itsStatusText1Pane', 'Pane57']
+   |    | child_window(title="itsStatusText1", control_type="Pane")
+   |    | 
+   |    | Pane - 'itsStatusText2'    (L1518, T1022, R1848, B1038)
+   |    | ['itsStatusText2Pane', 'itsStatusText2', 'Pane58']
+   |    | child_window(title="itsStatusText2", control_type="Pane")
+   |    | 
+   |    | Pane - 'itsStatusText3'    (L1214, T1022, R1514, B1038)
+   |    | ['Pane59', 'itsStatusText3Pane', 'itsStatusText3']
+   |    | child_window(title="itsStatusText3", control_type="Pane")
+   |    | 
+   |    | Pane - 'itsStatusText4'    (L890, T1022, R1210, B1038)
+   |    | ['itsStatusText4Pane', 'Pane60', 'itsStatusText4']
+   |    | child_window(title="itsStatusText4", control_type="Pane")
+   | 
+   | Pane - 'unnamed'    (L355, T386, R1920, B743)
+   | ['unnamedPane4', 'Pane61', 'unnamed4']
+   | child_window(title="unnamed", control_type="Pane")
+   |    | 
+   |    | Pane - 'unnamed'    (L356, T387, R1919, B742)
+   |    | ['unnamedPane5', 'Pane62', 'unnamed5']
+   |    | child_window(title="unnamed", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'W:\iso\HV-L-RR-V3_V1.GBR'    (L348, T358, R1927, B750)
+   |    |    | ['W:\\iso\\HV-L-RR-V3_V1.GBRPane', 'W:\\iso\\HV-L-RR-V3_V1.GBR', 'Pane63', 'W:\\iso\\HV-L-RR-V3_V1.GBRPane0', 'W:\\iso\\HV-L-RR-V3_V1.GBRPane1', 'W:\\iso\\HV-L-RR-V3_V1.GBR0', 'W:\\iso\\HV-L-RR-V3_V1.GBR1']
+   |    |    | child_window(title="W:\iso\HV-L-RR-V3_V1.GBR", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'W:\iso\HV-L-RR-V3_V1.GBR'    (L356, T387, R1919, B742)
+   |    |    |    | ['W:\\iso\\HV-L-RR-V3_V1.GBRPane2', 'W:\\iso\\HV-L-RR-V3_V1.GBR2', 'Pane64']
+   |    |    |    | child_window(title="W:\iso\HV-L-RR-V3_V1.GBR", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'Splitter'    (L362, T393, R1913, B736)
+   |    |    |    |    | ['Splitter', 'SplitterPane', 'Pane65']
+   |    |    |    |    | child_window(title="Splitter", control_type="Pane")
+   |    |    |    |    |    | 
+   |    |    |    |    |    | Pane - 'itsContourCanvas'    (L362, T393, R1913, B736)
+   |    |    |    |    |    | ['itsContourCanvasPane', 'itsContourCanvas', 'Pane66']
+   |    |    |    |    |    | child_window(title="itsContourCanvas", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'W:\iso\HV-L-RR-V3_V1.GBR'    (L356, T366, R1919, B387)
+   |    |    |    | ['W:\\iso\\HV-L-RR-V3_V1.GBRPane3', 'W:\\iso\\HV-L-RR-V3_V1.GBR3', 'Pane67']
+   |    |    |    | child_window(title="W:\iso\HV-L-RR-V3_V1.GBR", control_type="Pane")
+   | 
+   | Pane - 'qt_right_dock'    (L1920, T386, R1921, B743)
+   | ['Pane68', 'qt_right_dock', 'qt_right_dockPane']
+   | child_window(title="qt_right_dock", control_type="Pane")
+   | 
+   | Pane - 'qt_left_dock'    (L0, T386, R355, B743)
+   | ['qt_left_dock', 'qt_left_dockPane', 'Pane69']
+   | child_window(title="qt_left_dock", control_type="Pane")
+   |    | 
+   |    | Pane - 'Status-Fenster'    (L0, T386, R355, B739)
+   |    | ['Status-FensterPane', 'Status-Fenster', 'Pane70', 'Status-FensterPane0', 'Status-FensterPane1', 'Status-Fenster0', 'Status-Fenster1']
+   |    | child_window(title="Status-Fenster", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'qt_dockwidget_internal'    (L351, T386, R355, B739)
+   |    |    | ['qt_dockwidget_internal', 'Pane71', 'qt_dockwidget_internalPane', 'qt_dockwidget_internal0', 'qt_dockwidget_internal1', 'qt_dockwidget_internalPane0', 'qt_dockwidget_internalPane1']
+   |    |    | child_window(title="qt_dockwidget_internal", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'Status-Fenster'    (L1, T405, R350, B738)
+   |    |    | ['Status-FensterPane2', 'Status-Fenster2', 'Pane72']
+   |    |    | child_window(title="Status-Fenster", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'unnamed'    (L296, T704, R339, B727)
+   |    |    |    | ['unnamedPane6', 'Pane73', 'unnamed6']
+   |    |    |    | child_window(title="unnamed", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'unnamed'    (L293, T616, R339, B666)
+   |    |    |    | ['unnamedPane7', 'Pane74', 'unnamed7']
+   |    |    |    | child_window(title="unnamed", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'unnamed'    (L293, T560, R339, B610)
+   |    |    |    | ['unnamedPane8', 'Pane75', 'unnamed8']
+   |    |    |    | child_window(title="unnamed", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'unnamed'    (L293, T504, R339, B554)
+   |    |    |    | ['unnamedPane9', 'Pane76', 'unnamed9']
+   |    |    |    | child_window(title="unnamed", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'unnamed'    (L293, T448, R339, B498)
+   |    |    |    | ['unnamedPane10', 'Pane77', 'unnamed10']
+   |    |    |    | child_window(title="unnamed", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'unnamed'    (L137, T616, R287, B666)
+   |    |    |    | ['unnamedPane11', 'Pane78', 'unnamed11']
+   |    |    |    | child_window(title="unnamed", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'unnamed'    (L137, T560, R287, B610)
+   |    |    |    | ['unnamedPane12', 'Pane79', 'unnamed12']
+   |    |    |    | child_window(title="unnamed", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'unnamed'    (L137, T504, R287, B554)
+   |    |    |    | ['unnamedPane13', 'Pane80', 'unnamed13']
+   |    |    |    | child_window(title="unnamed", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'unnamed'    (L137, T448, R287, B498)
+   |    |    |    | ['unnamedPane14', 'Pane81', 'unnamed14']
+   |    |    |    | child_window(title="unnamed", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'unnamed'    (L12, T616, R131, B666)
+   |    |    |    | ['unnamedPane15', 'Pane82', 'unnamed15']
+   |    |    |    | child_window(title="unnamed", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'unnamed'    (L12, T560, R131, B610)
+   |    |    |    | ['unnamedPane16', 'Pane83', 'unnamed16']
+   |    |    |    | child_window(title="unnamed", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'unnamed'    (L12, T504, R131, B554)
+   |    |    |    | ['unnamedPane17', 'Pane84', 'unnamed17']
+   |    |    |    | child_window(title="unnamed", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'unnamed'    (L12, T448, R131, B498)
+   |    |    |    | ['unnamedPane18', 'Pane85', 'unnamed18']
+   |    |    |    | child_window(title="unnamed", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'qt_dockwidget_internal'    (L1, T387, R350, B404)
+   |    |    | ['qt_dockwidget_internal2', 'Pane86', 'qt_dockwidget_internalPane2']
+   |    |    | child_window(title="qt_dockwidget_internal", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'qt_close_button1'    (L336, T389, R348, B401)
+   |    |    |    | ['qt_close_button1Pane', 'qt_close_button1', 'Pane87', 'qt_close_button1Pane0', 'qt_close_button1Pane1', 'qt_close_button10', 'qt_close_button11']
+   |    |    |    | child_window(title="qt_close_button1", control_type="Pane")
+   | 
+   | Pane - 'qt_bottom_dock'    (L0, T743, R1920, B1019)
+   | ['Pane88', 'qt_bottom_dockPane', 'qt_bottom_dock']
+   | child_window(title="qt_bottom_dock", control_type="Pane")
+   |    | 
+   |    | Pane - 'Графика (Общее)'    (L0, T925, R1900, B1019)
+   |    | ['Графика (Общее)Pane', 'Pane89', 'Графика (Общее)']
+   |    | child_window(title="Графика (Общее)", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_SWAPTOOLBARNEXT'    (L1743, T925, R1900, B1019)
+   |    |    | ['Pane90', 'MI_SWAPTOOLBARNEXTPane', 'MI_SWAPTOOLBARNEXT']
+   |    |    | child_window(title="MI_SWAPTOOLBARNEXT", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'toolbar separator'    (L1735, T925, R1743, B1019)
+   |    |    | ['toolbar separator', 'toolbar separatorPane', 'Pane91', 'toolbar separator0', 'toolbar separator1', 'toolbar separatorPane0', 'toolbar separatorPane1']
+   |    |    | child_window(title="toolbar separator", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_SWAPTOOLBARBACK'    (L1578, T925, R1735, B1019)
+   |    |    | ['MI_SWAPTOOLBARBACK', 'MI_SWAPTOOLBARBACKPane', 'Pane92']
+   |    |    | child_window(title="MI_SWAPTOOLBARBACK", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'toolbar separator'    (L1570, T925, R1578, B1019)
+   |    |    | ['toolbar separator2', 'toolbar separatorPane2', 'Pane93']
+   |    |    | child_window(title="toolbar separator", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_NOFUNCTION'    (L1413, T925, R1570, B1019)
+   |    |    | ['MI_NOFUNCTION', 'MI_NOFUNCTIONPane', 'Pane94', 'MI_NOFUNCTION0', 'MI_NOFUNCTION1', 'MI_NOFUNCTIONPane0', 'MI_NOFUNCTIONPane1']
+   |    |    | child_window(title="MI_NOFUNCTION", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_NOFUNCTION'    (L1256, T925, R1413, B1019)
+   |    |    | ['MI_NOFUNCTION2', 'MI_NOFUNCTIONPane2', 'Pane95']
+   |    |    | child_window(title="MI_NOFUNCTION", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_NOFUNCTION'    (L1099, T925, R1256, B1019)
+   |    |    | ['MI_NOFUNCTION3', 'MI_NOFUNCTIONPane3', 'Pane96']
+   |    |    | child_window(title="MI_NOFUNCTION", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_REFRESH'    (L942, T925, R1099, B1019)
+   |    |    | ['MI_REFRESH', 'MI_REFRESHPane', 'Pane97']
+   |    |    | child_window(title="MI_REFRESH", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_TOGGLEDISPLAYCONTOUR'    (L785, T925, R942, B1019)
+   |    |    | ['MI_TOGGLEDISPLAYCONTOURPane', 'MI_TOGGLEDISPLAYCONTOUR', 'Pane98']
+   |    |    | child_window(title="MI_TOGGLEDISPLAYCONTOUR", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_TOGGLEDISPLAYPOINTS'    (L628, T925, R785, B1019)
+   |    |    | ['MI_TOGGLEDISPLAYPOINTS', 'MI_TOGGLEDISPLAYPOINTSPane', 'Pane99']
+   |    |    | child_window(title="MI_TOGGLEDISPLAYPOINTS", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_CURSORCENTER'    (L471, T925, R628, B1019)
+   |    |    | ['MI_CURSORCENTERPane', 'MI_CURSORCENTER', 'Pane100']
+   |    |    | child_window(title="MI_CURSORCENTER", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_TOGGLEMEASUREMODE'    (L314, T925, R471, B1019)
+   |    |    | ['MI_TOGGLEMEASUREMODEPane', 'Pane101', 'MI_TOGGLEMEASUREMODE']
+   |    |    | child_window(title="MI_TOGGLEMEASUREMODE", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_ZOOMOUT'    (L157, T925, R314, B1019)
+   |    |    | ['MI_ZOOMOUTPane', 'Pane102', 'MI_ZOOMOUT']
+   |    |    | child_window(title="MI_ZOOMOUT", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_ZOOMIN'    (L0, T925, R157, B1019)
+   |    |    | ['MI_ZOOMINPane', 'MI_ZOOMIN', 'Pane103']
+   |    |    | child_window(title="MI_ZOOMIN", control_type="Pane")
+   |    | 
+   |    | Pane - 'Сообщения'    (L0, T743, R1920, B925)
+   |    | ['Сообщения', 'СообщенияPane', 'Pane104']
+   |    | child_window(title="Сообщения", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'qt_dockwidget_internal'    (L0, T743, R1916, B747)
+   |    |    | ['qt_dockwidget_internal3', 'Pane105', 'qt_dockwidget_internalPane3']
+   |    |    | child_window(title="qt_dockwidget_internal", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'itsMessageWindow'    (L19, T748, R1915, B924)
+   |    |    | ['itsMessageWindow', 'itsMessageWindowPane', 'Pane106']
+   |    |    | child_window(title="itsMessageWindow", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'qt_viewport'    (L21, T750, R1896, B922)
+   |    |    |    | ['Pane107', 'qt_viewport3', 'qt_viewportPane3']
+   |    |    |    | child_window(title="qt_viewport", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'qt_vbar'    (L1896, T750, R1913, B922)
+   |    |    |    | ['Pane108', 'qt_vbarPane3', 'qt_vbar3']
+   |    |    |    | child_window(title="qt_vbar", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'qt_dockwidget_internal'    (L1916, T743, R1920, B925)
+   |    |    | ['qt_dockwidget_internal4', 'Pane109', 'qt_dockwidget_internalPane4']
+   |    |    | child_window(title="qt_dockwidget_internal", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'qt_dockwidget_internal'    (L1, T748, R18, B924)
+   |    |    | ['qt_dockwidget_internal5', 'Pane110', 'qt_dockwidget_internalPane5']
+   |    |    | child_window(title="qt_dockwidget_internal", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'qt_close_button1'    (L3, T750, R15, B762)
+   |    |    |    | ['qt_close_button1Pane2', 'qt_close_button12', 'Pane111']
+   |    |    |    | child_window(title="qt_close_button1", control_type="Pane")
+   | 
+   | Pane - 'qt_top_dock'    (L0, T47, R1920, B386)
+   | ['qt_top_dockPane', 'qt_top_dock', 'Pane112']
+   | child_window(title="qt_top_dock", control_type="Pane")
+   |    | 
+   |    | Pane - 'Список заданий'    (L346, T171, R1920, B386)
+   |    | ['Список заданий', 'Список заданийPane', 'Pane113', 'Список заданий0', 'Список заданий1', 'Список заданийPane0', 'Список заданийPane1']
+   |    | child_window(title="Список заданий", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'qt_dockwidget_internal'    (L346, T382, R1920, B386)
+   |    |    | ['qt_dockwidget_internal6', 'Pane114', 'qt_dockwidget_internalPane6']
+   |    |    | child_window(title="qt_dockwidget_internal", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'qt_dockwidget_internal'    (L1916, T171, R1920, B382)
+   |    |    | ['qt_dockwidget_internal7', 'Pane115', 'qt_dockwidget_internalPane7']
+   |    |    | child_window(title="qt_dockwidget_internal", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'Список заданий'    (L365, T172, R1915, B381)
+   |    |    | ['Список заданий2', 'Список заданийPane2', 'Pane116']
+   |    |    | child_window(title="Список заданий", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'itsQueueEndSave'    (L367, T361, R422, B379)
+   |    |    |    | ['itsQueueEndSave', 'itsQueueEndSavePane', 'Pane117']
+   |    |    |    | child_window(title="itsQueueEndSave", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'itsQueueSave'    (L367, T340, R422, B358)
+   |    |    |    | ['itsQueueSave', 'itsQueueSavePane', 'Pane118']
+   |    |    |    | child_window(title="itsQueueSave", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'itsQueueLoad'    (L367, T319, R422, B337)
+   |    |    |    | ['Pane119', 'itsQueueLoadPane', 'itsQueueLoad']
+   |    |    |    | child_window(title="itsQueueLoad", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'itsQueueNew'    (L367, T298, R422, B316)
+   |    |    |    | ['itsQueueNewPane', 'Pane120', 'itsQueueNew']
+   |    |    |    | child_window(title="itsQueueNew", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'Line2'    (L367, T279, R422, B282)
+   |    |    |    | ['Line2Pane', 'Pane121', 'Line2']
+   |    |    |    | child_window(title="Line2", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'itsJobDown'    (L367, T258, R422, B276)
+   |    |    |    | ['itsJobDownPane', 'itsJobDown', 'Pane122']
+   |    |    |    | child_window(title="itsJobDown", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'itsJobUp'    (L367, T237, R422, B255)
+   |    |    |    | ['itsJobUpPane', 'itsJobUp', 'Pane123']
+   |    |    |    | child_window(title="itsJobUp", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'itsJobGroup'    (L367, T216, R422, B234)
+   |    |    |    | ['Pane124', 'itsJobGroupPane', 'itsJobGroup']
+   |    |    |    | child_window(title="itsJobGroup", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'itsJobDelete'    (L367, T195, R422, B213)
+   |    |    |    | ['itsJobDeletePane', 'itsJobDelete', 'Pane125']
+   |    |    |    | child_window(title="itsJobDelete", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'itsQueueEdit'    (L367, T174, R422, B192)
+   |    |    |    | ['itsQueueEdit', 'itsQueueEditPane', 'Pane126']
+   |    |    |    | child_window(title="itsQueueEdit", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'itsQueueList'    (L425, T174, R1913, B379)
+   |    |    |    | ['itsQueueListPane', 'itsQueueList', 'Pane127']
+   |    |    |    | child_window(title="itsQueueList", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'list view header'    (L427, T176, R1911, B196)
+   |    |    |    |    | ['list view header2', 'Pane128', 'list view headerPane2']
+   |    |    |    |    | child_window(title="list view header", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'qt_viewport'    (L427, T196, R1911, B377)
+   |    |    |    |    | ['Pane129', 'qt_viewport4', 'qt_viewportPane4']
+   |    |    |    |    | child_window(title="qt_viewport", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'qt_dockwidget_internal'    (L347, T172, R364, B381)
+   |    |    | ['qt_dockwidget_internal8', 'Pane130', 'qt_dockwidget_internalPane8']
+   |    |    | child_window(title="qt_dockwidget_internal", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'qt_close_button1'    (L349, T174, R361, B186)
+   |    |    |    | ['qt_close_button1Pane3', 'qt_close_button13', 'Pane131']
+   |    |    |    | child_window(title="qt_close_button1", control_type="Pane")
+   |    | 
+   |    | Pane - 'Информационное окно'    (L0, T171, R346, B386)
+   |    | ['Информационное окноPane', 'Информационное окно', 'Pane132', 'Информационное окноPane0', 'Информационное окноPane1', 'Информационное окно0', 'Информационное окно1']
+   |    | child_window(title="Информационное окно", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'qt_dockwidget_internal'    (L0, T382, R346, B386)
+   |    |    | ['qt_dockwidget_internal9', 'Pane133', 'qt_dockwidget_internalPane9']
+   |    |    | child_window(title="qt_dockwidget_internal", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'qt_dockwidget_internal'    (L342, T171, R346, B382)
+   |    |    | ['qt_dockwidget_internal10', 'Pane134', 'qt_dockwidget_internalPane10']
+   |    |    | child_window(title="qt_dockwidget_internal", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'Информационное окно'    (L19, T172, R341, B381)
+   |    |    | ['Информационное окноPane2', 'Информационное окно2', 'Pane135']
+   |    |    | child_window(title="Информационное окно", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'frame5'    (L38, T228, R318, B378)
+   |    |    |    | ['frame5Pane2', 'frame52', 'Pane136']
+   |    |    |    | child_window(title="frame5", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'itsValueAllowanceY'    (L193, T318, R263, B338)
+   |    |    |    |    | ['itsValueAllowanceYPane', 'itsValueAllowanceY', 'Pane137']
+   |    |    |    |    | child_window(title="itsValueAllowanceY", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'itsValueAllowanceX'    (L93, T318, R178, B338)
+   |    |    |    |    | ['itsValueAllowanceX', 'itsValueAllowanceXPane', 'Pane138']
+   |    |    |    |    | child_window(title="itsValueAllowanceX", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'itsDimAllowance'    (L268, T318, R308, B338)
+   |    |    |    |    | ['itsDimAllowancePane', 'Pane139', 'itsDimAllowance']
+   |    |    |    |    | child_window(title="itsDimAllowance", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'itsValueNumIs'    (L258, T298, R278, B318)
+   |    |    |    |    | ['itsValueNumIsPane', 'itsValueNumIs', 'Pane140']
+   |    |    |    |    | child_window(title="itsValueNumIs", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'itsValueNumOf'    (L278, T298, R308, B318)
+   |    |    |    |    | ['itsValueNumOfPane', 'Pane141', 'itsValueNumOf']
+   |    |    |    |    | child_window(title="itsValueNumOf", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'itsDimTimeMaxV'    (L268, T338, R308, B354)
+   |    |    |    |    | ['itsDimTimeMaxV', 'itsDimTimeMaxVPane', 'Pane142']
+   |    |    |    |    | child_window(title="itsDimTimeMaxV", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'itsValueTimeMaxV'    (L128, T338, R248, B354)
+   |    |    |    |    | ['itsValueTimeMaxV', 'itsValueTimeMaxVPane', 'Pane143']
+   |    |    |    |    | child_window(title="itsValueTimeMaxV", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'textLabel1'    (L48, T298, R118, B314)
+   |    |    |    |    | ['Pane144', 'textLabel1', 'textLabel1Pane']
+   |    |    |    |    | child_window(title="textLabel1", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'itsParaSet'    (L118, T278, R308, B294)
+   |    |    |    |    | ['itsParaSetPane', 'itsParaSet', 'Pane145']
+   |    |    |    |    | child_window(title="itsParaSet", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'itsContourFileName'    (L108, T258, R308, B274)
+   |    |    |    |    | ['itsContourFileNamePane', 'Pane146', 'itsContourFileName']
+   |    |    |    |    | child_window(title="itsContourFileName", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'textLabelX'    (L183, T318, R191, B334)
+   |    |    |    |    | ['Pane147', 'textLabelXPane', 'textLabelX']
+   |    |    |    |    | child_window(title="textLabelX", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'textLabelAllowance'    (L48, T318, R88, B334)
+   |    |    |    |    | ['textLabelAllowance', 'textLabelAllowancePane', 'Pane148']
+   |    |    |    |    | child_window(title="textLabelAllowance", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'textLabelBladeIntelligence'    (L48, T358, R128, B374)
+   |    |    |    |    | ['textLabelBladeIntelligence', 'Pane149', 'textLabelBladeIntelligencePane']
+   |    |    |    |    | child_window(title="textLabelBladeIntelligence", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'textLabelTimeMaxV'    (L48, T338, R128, B354)
+   |    |    |    |    | ['Pane150', 'textLabelTimeMaxVPane', 'textLabelTimeMaxV']
+   |    |    |    |    | child_window(title="textLabelTimeMaxV", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'itsDimBladeIntelligence'    (L248, T358, R288, B374)
+   |    |    |    |    | ['itsDimBladeIntelligence', 'itsDimBladeIntelligencePane', 'Pane151']
+   |    |    |    |    | child_window(title="itsDimBladeIntelligence", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'itsValueBladeIntelligence'    (L138, T358, R238, B379)
+   |    |    |    |    | ['itsValueBladeIntelligence', 'Pane152', 'itsValueBladeIntelligencePane']
+   |    |    |    |    | child_window(title="itsValueBladeIntelligence", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'itsValueOperateMode'    (L48, T238, R168, B254)
+   |    |    |    |    | ['itsValueOperateMode', 'Pane153', 'itsValueOperateModePane']
+   |    |    |    |    | child_window(title="itsValueOperateMode", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'textLabelContourFile'    (L48, T258, R128, B274)
+   |    |    |    |    | ['textLabelContourFile', 'textLabelContourFilePane', 'Pane154']
+   |    |    |    |    | child_window(title="textLabelContourFile", control_type="Pane")
+   |    |    |    |    | 
+   |    |    |    |    | Pane - 'textLabelParaSet'    (L48, T278, R128, B294)
+   |    |    |    |    | ['textLabelParaSet', 'Pane155', 'textLabelParaSetPane']
+   |    |    |    |    | child_window(title="textLabelParaSet", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'itsValueMainMode'    (L218, T176, R318, B226)
+   |    |    |    | ['itsValueMainModePane', 'itsValueMainMode', 'Pane156']
+   |    |    |    | child_window(title="itsValueMainMode", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'PixmapLabel1'    (L38, T175, R158, B228)
+   |    |    |    | ['PixmapLabel1Pane', 'Pane157', 'PixmapLabel1']
+   |    |    |    | child_window(title="PixmapLabel1", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'qt_dockwidget_internal'    (L1, T172, R18, B381)
+   |    |    | ['qt_dockwidget_internal11', 'Pane158', 'qt_dockwidget_internalPane11']
+   |    |    | child_window(title="qt_dockwidget_internal", control_type="Pane")
+   |    |    |    | 
+   |    |    |    | Pane - 'qt_close_button1'    (L3, T174, R15, B186)
+   |    |    |    | ['qt_close_button1Pane4', 'qt_close_button14', 'Pane159']
+   |    |    |    | child_window(title="qt_close_button1", control_type="Pane")
+   |    | 
+   |    | Pane - 'Сервис'    (L0, T109, R1132, B171)
+   |    | ['Сервис', 'СервисPane', 'Pane160']
+   |    | child_window(title="Сервис", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_JOGGTIPP'    (L1066, T110, R1131, B170)
+   |    |    | ['MI_JOGGTIPP', 'Pane161', 'MI_JOGGTIPPPane', 'MI_JOGGTIPP0', 'MI_JOGGTIPP1', 'MI_JOGGTIPPPane0', 'MI_JOGGTIPPPane1']
+   |    |    | child_window(title="MI_JOGGTIPP", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_TIP4'    (L1001, T110, R1066, B170)
+   |    |    | ['MI_TIP4', 'Pane162', 'MI_TIP4Pane', 'MI_TIP40', 'MI_TIP41', 'MI_TIP4Pane0', 'MI_TIP4Pane1']
+   |    |    | child_window(title="MI_TIP4", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_TIP3'    (L936, T110, R1001, B170)
+   |    |    | ['MI_TIP3', 'MI_TIP3Pane', 'Pane163', 'MI_TIP30', 'MI_TIP31', 'MI_TIP3Pane0', 'MI_TIP3Pane1']
+   |    |    | child_window(title="MI_TIP3", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_TIP2'    (L871, T110, R936, B170)
+   |    |    | ['MI_TIP2', 'Pane164', 'MI_TIP2Pane', 'MI_TIP20', 'MI_TIP21', 'MI_TIP2Pane0', 'MI_TIP2Pane1']
+   |    |    | child_window(title="MI_TIP2", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_TIP1'    (L806, T110, R871, B170)
+   |    |    | ['MI_TIP1', 'MI_TIP1Pane', 'Pane165', 'MI_TIP10', 'MI_TIP11', 'MI_TIP1Pane0', 'MI_TIP1Pane1']
+   |    |    | child_window(title="MI_TIP1", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_WHATSTHIS'    (L741, T110, R806, B170)
+   |    |    | ['Pane166', 'MI_WHATSTHIS', 'MI_WHATSTHISPane']
+   |    |    | child_window(title="MI_WHATSTHIS", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_TECHNOLIST1'    (L676, T110, R741, B170)
+   |    |    | ['MI_TECHNOLIST1', 'Pane167', 'MI_TECHNOLIST1Pane']
+   |    |    | child_window(title="MI_TECHNOLIST1", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_TECHNOPARA1'    (L611, T110, R676, B170)
+   |    |    | ['MI_TECHNOPARA1Pane', 'Pane168', 'MI_TECHNOPARA1']
+   |    |    | child_window(title="MI_TECHNOPARA1", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_PARACONFIG'    (L546, T110, R611, B170)
+   |    |    | ['Pane169', 'MI_PARACONFIGPane', 'MI_PARACONFIG']
+   |    |    | child_window(title="MI_PARACONFIG", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'toolbar separator'    (L538, T110, R546, B170)
+   |    |    | ['toolbar separator3', 'toolbar separatorPane3', 'Pane170']
+   |    |    | child_window(title="toolbar separator", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_PARAMETER'    (L473, T110, R538, B170)
+   |    |    | ['MI_PARAMETER', 'Pane171', 'MI_PARAMETERPane']
+   |    |    | child_window(title="MI_PARAMETER", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'toolbar separator'    (L465, T110, R473, B170)
+   |    |    | ['toolbar separator4', 'toolbar separatorPane4', 'Pane172']
+   |    |    | child_window(title="toolbar separator", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_CNCCONTINUE'    (L400, T110, R465, B170)
+   |    |    | ['MI_CNCCONTINUE', 'MI_CNCCONTINUEPane', 'Pane173', 'MI_CNCCONTINUE0', 'MI_CNCCONTINUE1', 'MI_CNCCONTINUEPane0', 'MI_CNCCONTINUEPane1']
+   |    |    | child_window(title="MI_CNCCONTINUE", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_CNCPAUSE'    (L335, T110, R400, B170)
+   |    |    | ['MI_CNCPAUSEPane', 'MI_CNCPAUSE', 'Pane174', 'MI_CNCPAUSEPane0', 'MI_CNCPAUSEPane1', 'MI_CNCPAUSE0', 'MI_CNCPAUSE1']
+   |    |    | child_window(title="MI_CNCPAUSE", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_JQSTOP'    (L270, T110, R335, B170)
+   |    |    | ['Pane175', 'MI_JQSTOP', 'MI_JQSTOPPane', 'MI_JQSTOP0', 'MI_JQSTOP1', 'MI_JQSTOPPane0', 'MI_JQSTOPPane1']
+   |    |    | child_window(title="MI_JQSTOP", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_JQSTART'    (L205, T110, R270, B170)
+   |    |    | ['MI_JQSTARTPane', 'Pane176', 'MI_JQSTART', 'MI_JQSTARTPane0', 'MI_JQSTARTPane1', 'MI_JQSTART0', 'MI_JQSTART1']
+   |    |    | child_window(title="MI_JQSTART", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_MACHINE5'    (L140, T110, R205, B170)
+   |    |    | ['MI_MACHINE5Pane', 'Pane177', 'MI_MACHINE5']
+   |    |    | child_window(title="MI_MACHINE5", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_MACHINE2'    (L75, T110, R140, B170)
+   |    |    | ['MI_MACHINE2', 'Pane178', 'MI_MACHINE2Pane', 'MI_MACHINE20', 'MI_MACHINE21', 'MI_MACHINE2Pane0', 'MI_MACHINE2Pane1']
+   |    |    | child_window(title="MI_MACHINE2", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_MANUALPOS'    (L10, T110, R75, B170)
+   |    |    | ['MI_MANUALPOSPane', 'MI_MANUALPOS', 'Pane179', 'MI_MANUALPOSPane0', 'MI_MANUALPOSPane1', 'MI_MANUALPOS0', 'MI_MANUALPOS1']
+   |    |    | child_window(title="MI_MANUALPOS", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'qt_dockwidget_internal'    (L1, T110, R9, B170)
+   |    |    | ['qt_dockwidget_internal12', 'Pane180', 'qt_dockwidget_internalPane12']
+   |    |    | child_window(title="qt_dockwidget_internal", control_type="Pane")
+   |    | 
+   |    | Pane - 'Управление'    (L0, T47, R1055, B109)
+   |    | ['Управление', 'УправлениеPane', 'Pane181']
+   |    | child_window(title="Управление", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_JOGGTIPP'    (L987, T48, R1052, B108)
+   |    |    | ['MI_JOGGTIPP2', 'Pane182', 'MI_JOGGTIPPPane2']
+   |    |    | child_window(title="MI_JOGGTIPP", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_TIP4'    (L922, T48, R987, B108)
+   |    |    | ['MI_TIP42', 'Pane183', 'MI_TIP4Pane2']
+   |    |    | child_window(title="MI_TIP4", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_TIP3'    (L857, T48, R922, B108)
+   |    |    | ['MI_TIP32', 'MI_TIP3Pane2', 'Pane184']
+   |    |    | child_window(title="MI_TIP3", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_TIP2'    (L792, T48, R857, B108)
+   |    |    | ['MI_TIP22', 'Pane185', 'MI_TIP2Pane2']
+   |    |    | child_window(title="MI_TIP2", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_TIP1'    (L727, T48, R792, B108)
+   |    |    | ['MI_TIP12', 'MI_TIP1Pane2', 'Pane186']
+   |    |    | child_window(title="MI_TIP1", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_EXIT'    (L662, T48, R727, B108)
+   |    |    | ['MI_EXITPane', 'MI_EXIT', 'Pane187']
+   |    |    | child_window(title="MI_EXIT", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_MACHINE2'    (L597, T48, R662, B108)
+   |    |    | ['MI_MACHINE22', 'Pane188', 'MI_MACHINE2Pane2']
+   |    |    | child_window(title="MI_MACHINE2", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_MACHINE8'    (L532, T48, R597, B108)
+   |    |    | ['MI_MACHINE8Pane', 'MI_MACHINE8', 'Pane189']
+   |    |    | child_window(title="MI_MACHINE8", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_MACHINE7'    (L467, T48, R532, B108)
+   |    |    | ['MI_MACHINE7Pane', 'MI_MACHINE7', 'Pane190']
+   |    |    | child_window(title="MI_MACHINE7", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_MACHINE3'    (L402, T48, R467, B108)
+   |    |    | ['MI_MACHINE3', 'Pane191', 'MI_MACHINE3Pane']
+   |    |    | child_window(title="MI_MACHINE3", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_CNCCONTINUE'    (L337, T48, R402, B108)
+   |    |    | ['MI_CNCCONTINUE2', 'MI_CNCCONTINUEPane2', 'Pane192']
+   |    |    | child_window(title="MI_CNCCONTINUE", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_CNCPAUSE'    (L272, T48, R337, B108)
+   |    |    | ['MI_CNCPAUSEPane2', 'MI_CNCPAUSE2', 'Pane193']
+   |    |    | child_window(title="MI_CNCPAUSE", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_JQSTOP'    (L207, T48, R272, B108)
+   |    |    | ['Pane194', 'MI_JQSTOP2', 'MI_JQSTOPPane2']
+   |    |    | child_window(title="MI_JQSTOP", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_JQSTART'    (L142, T48, R207, B108)
+   |    |    | ['MI_JQSTARTPane2', 'Pane195', 'MI_JQSTART2']
+   |    |    | child_window(title="MI_JQSTART", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_MANUALPOS'    (L77, T48, R142, B108)
+   |    |    | ['MI_MANUALPOSPane2', 'MI_MANUALPOS2', 'Pane196']
+   |    |    | child_window(title="MI_MANUALPOS", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'MI_CNCUNLOCK'    (L12, T48, R77, B108)
+   |    |    | ['MI_CNCUNLOCK', 'Pane197', 'MI_CNCUNLOCKPane']
+   |    |    | child_window(title="MI_CNCUNLOCK", control_type="Pane")
+   |    |    | 
+   |    |    | Pane - 'qt_dockwidget_internal'    (L3, T48, R11, B108)
+   |    |    | ['qt_dockwidget_internal13', 'Pane198', 'qt_dockwidget_internalPane13']
+   |    |    | child_window(title="qt_dockwidget_internal", control_type="Pane")
+   | 
+   | TitleBar - ''    (L16, T0, R1920, B21)
+   | ['TitleBar2']
+   |    | 
+   |    | Menu - 'Система'    (L0, T0, R21, B21)
+   |    | ['Система3', 'Menu2', 'СистемаMenu2']
+   |    | child_window(title="Система", control_type="MenuBar")
+   |    |    | 
+   |    |    | MenuItem - 'Система'    (L0, T0, R21, B21)
+   |    |    | ['Система4', 'СистемаMenuItem2', 'MenuItem2']
+   |    |    | child_window(title="Система", control_type="MenuItem")
+   |    | 
+   |    | Button - 'Свернуть'    (L1821, T2, R1852, B19)
+   |    | ['Свернуть', 'СвернутьButton', 'Button2']
+   |    | child_window(title="Свернуть", control_type="Button")
+   |    | 
+   |    | Button - 'Восстановить'    (L1854, T2, R1885, B19)
+   |    | ['Восстановить', 'ВосстановитьButton', 'Button3']
+   |    | child_window(title="Восстановить", control_type="Button")
+   |    | 
+   |    | Button - 'Закрыть'    (L1887, T2, R1918, B19)
+   |    | ['Закрыть2', 'ЗакрытьButton2', 'Button4']
+   |    | child_window(title="Закрыть", control_type="Button")
