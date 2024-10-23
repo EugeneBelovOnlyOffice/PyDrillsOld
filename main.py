@@ -79,18 +79,18 @@ dfglobal.drop(index=dfglobal.index[-1], axis=0, inplace=True)
 
 # эта функция кликает по кнопке в nextgen
 def nextgen_clicker():
-    # app = Application(backend="uia").start(r"C:\Program Files\PuTTY\putty.exe")
-    # a pp = Application(backend="uia").connect(best_match="PuTTY", timeout=100)
-    # app.PuTTYConfiguration.print_control_identifiers()
     try:
-        handle = pywinauto.findwindows.find_window(
-            best_match=nextgen_name
-        )  # здесь мы ищем наиболее подходящее окно по названию
+        # здесь мы ищем наиболее подходящее окно по названию
+        handle = pywinauto.findwindows.find_window(best_match=nextgen_name)
 
         app = pywinauto.application.Application(backend="uia").connect(
             handle=handle, timeout=100
         )
-        app.Dialog.About.click()
+
+        # кликаем по кнопке редактора
+        app.Dialog.child_window(
+            title="qt_top_dock", control_type="Pane"
+        ).СписокзаданийPane.СписокзаданийPane2.itsQueueEditPane.click_input()
     except:
         root = tk.Tk()
         root.withdraw()
