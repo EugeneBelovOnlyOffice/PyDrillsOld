@@ -1,9 +1,8 @@
-import tkinter.messagebox
 import serial
 import asyncio
 import time
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QPushButton
 from PyQt5 import QtCore
 import requests
 import glob
@@ -13,7 +12,6 @@ import json
 import sqlite3
 from datetime import datetime
 import pywinauto
-import tkinter as tk
 import warnings
 
 
@@ -93,9 +91,7 @@ def nextgen_clicker():
             title="qt_top_dock", control_type="Pane"
         ).СписокзаданийPane.СписокзаданийPane2.itsQueueEditPane.click_input()
     except:
-        root = tk.Tk()
-        root.withdraw()
-        tkinter.messagebox.showerror(title="NextGen", message="Запустите NextGen")
+        print("Запустите NextGen")
 
 
 # функция, строит массив из сверел (два элемента). Сверла, вынутые с селектора
@@ -195,7 +191,7 @@ async def main():
             # если произошла запись в логи, то будет выполняться эта часть. Сюда нужно вставить http post в БД Bullmer
             dfglobal = df1.copy()
             btn_clk()
-            print("Файл не совпадает")
+            print("Файл не совпадает. Записываем в SQL")
 
             # этот запрос отправляет данные на сервер. пишет статистику Булмер в базу
             data = {
@@ -229,6 +225,7 @@ async def main():
             }
             json_data = json.dumps(data)
             requests.post(blogs_db, data=json_data)
+            print(json_data)
 
     # эта функция срабатывает при нажатии кнопки "Очистить"
     def btn_clk():
@@ -253,12 +250,7 @@ async def main():
 
         # проверяем, сканировали ли мы эту раскладку ранее (проверяем последнюю запись в SQLite). Если да, выводим worning
         if sqlite_get(bullmer_sqlite_db) == form.lineEdit.text():
-            root = tk.Tk()
-            root.withdraw()
-            tkinter.messagebox.showwarning(
-                title="SQLite",
-                message="Уже сканировали " + sqlite_get_time(bullmer_sqlite_db),
-            )
+            print("Уже сканировали " + sqlite_get_time(bullmer_sqlite_db))
 
         # записывает отсканированную раскладку в sqlite
         sqlite_post(form.lineEdit.text(), bullmer_sqlite_db)
@@ -279,6 +271,8 @@ async def main():
         json_data = json.dumps(data)
 
         requests.post(blogs_db, data=json_data)
+        print("Записываем в базу SQL для ТВ")
+        print(json_data)
 
     # эта функция получает строку с ардуино и вносит значения в интерфейс
     def read_serial_arduino():
@@ -346,6 +340,13 @@ async def main():
     app = QApplication([])
     window, form = Window(), Form()
     form.setupUi(window)
+
+    window.setWindowFlag(QtCore.Qt.WindowStaysOnTopHint, True)  # Поверх всех окон
+    window.setWindowFlag(
+        QtCore.Qt.FramelessWindowHint, True
+    )  # Запрещаем двигать окно, убирая рамку
+    window.setWindowFlag(QtCore.Qt.WindowMinimizeButtonHint, False)
+
     window.show()
 
     # настраиваем сценарий для элемента pushButton
