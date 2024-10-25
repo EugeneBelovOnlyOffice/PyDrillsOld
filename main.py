@@ -33,16 +33,16 @@ bullmer_sqlite_db = "bullmersqlite.db"
 bullmer_log_folder_filter = "c:\\TEMP\*.csv"
 
 # инициализация названия булмера
-bullmer_db_log_name = "3"
+bullmer_db_log_name = "4"
 
 # инициализация точки входа для получение сверел с бд
 drills_db = "http://10.55.128.67:5000/cutting/drills"
 
 # инициализация точки входа отправки изменений в логе(статистики) в бд
-blogs_db = "http://10.55.128.67:5000"
+blogs_db = "http://10.55.128.67:5000/cutting/bullmerStat"
 
 # инициализация точки входа отправки текущей и предидущей раскладок в базу экрана раскроя
-current_db = "http://10.55.128.67:5000"
+current_db = "http://10.55.128.67:5000/cutting/currentBullmerLog"
 
 # инициализация ЧАСТИ строки названия nextgen - влияет на поиск окна nextgen, чтобы нажать клавишу редактора
 nextgen_name = "NextGeneration R7.8.1"  # или "Nextgen 8.3.0"
@@ -268,11 +268,11 @@ async def main():
                 "komp": "Bullmer" + str(bullmer_db_log_name),  # string
             }
         }
-        json_data = json.dumps(data)
-
-        requests.post(blogs_db, data=json_data)
-        print("Записываем в базу SQL для ТВ")
-        print(json_data)
+        if form.lineEdit.text() == "":
+            pass
+        else:
+            print(requests.post(current_db, json=data, timeout=2.50))
+            print(data)
 
     # эта функция получает строку с ардуино и вносит значения в интерфейс
     def read_serial_arduino():
