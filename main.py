@@ -2,7 +2,7 @@ import serial
 import asyncio
 import time
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QPushButton, QMessageBox
+from PyQt5.QtWidgets import QApplication, QPushButton
 from PyQt5 import QtCore
 import requests
 import glob
@@ -13,16 +13,8 @@ import sqlite3
 from datetime import datetime
 import pywinauto
 import warnings
-
-
-#############################################################################################
-# иницилизация порта Ардуино
-ser = serial.Serial()
-ser.baudrate = 9600
-ser.port = "COM6"
-ser.open()
-time.sleep(2)
-
+from tkinter import *
+from tkinter import font
 
 # инициализации
 ##############################################################################################
@@ -50,10 +42,18 @@ nextgen_name = "NextGeneration R7.8.1"  # или "Nextgen 8.3.0"
 # пароль бригадира
 supervisor_pass = "bucut"
 
+#############################################################################################
+# иницилизация порта Ардуино
+ser = serial.Serial()
+ser.baudrate = 9600
+ser.port = "COM6"
+ser.open()
+time.sleep(2)
+
 # Создаем глобальный DataFrame
 ##############################################################################################
 # возвращаем самый ранний файл csv в каталоге логов
-list_of_files = glob.glob(bullmer_log_folder_filter)
+list_of_files = glob.glob(bullmer_log_folder_filter)  # noqa: F405
 latest_file = max(list_of_files, key=os.path.getctime)
 
 # создаем датафрейм и выводим его в консоль
@@ -79,7 +79,7 @@ dfglobal.drop(index=dfglobal.index[-1], axis=0, inplace=True)
 
 
 # эта функция кликает по кнопке в nextgen
-def nextgen_clicker(self):
+def nextgen_clicker():
     try:
         # здесь мы ищем наиболее подходящее окно по названию
         handle = pywinauto.findwindows.find_window(best_match=nextgen_name)
@@ -94,7 +94,27 @@ def nextgen_clicker(self):
         ).СписокзаданийPane.СписокзаданийPane2.itsQueueEditPane.click_input()
     except:
         print("Запустите NextGen")
-        QMessageBox.about(self, "Nextgen", "Запустите Nextgen")
+        top = Tk()
+        top.geometry("200x200+10+10")
+        top.title("NextGen")
+
+        # make font template
+        appHighlightFont = font.Font(family="Helvetica", size=15, weight="bold")
+        font.families()
+
+        # create listbox object
+        listbox1 = Listbox(
+            top,
+            height=8,
+            width=18,
+            bg="lightgrey",
+            activestyle="dotbox",
+            font=appHighlightFont,
+            fg="red",
+        )
+        listbox1.insert(1, "Запустите NextGen")
+        listbox1.grid(row=1, column=1, sticky=W, pady=2)
+        top.mainloop()
 
 
 # функция, строит массив из сверел (два элемента). Сверла, вынутые с селектора
@@ -253,21 +273,39 @@ async def main():
             form.lcdNumber_4.display(x.json().get(("Сверло2", None)))
             print(x.json().get("Сверло1", None))
             print(x.json().get(("Сверло2", None)))
-            nextgen_clicker(
-                window
-            )  # если раскладка найдена в базе - запускаем редактор NextGen
+
+            nextgen_clicker()  # если раскладка найдена в базе - запускаем редактор NextGen
+
         except:
             form.lcdNumber_3.display(None)
             form.lcdNumber_4.display(None)
 
         # проверяем, сканировали ли мы эту раскладку ранее (проверяем последнюю запись в SQLite). Если да, выводим worning
         if sqlite_get(bullmer_sqlite_db) == form.lineEdit.text():
-            QMessageBox.about(
-                window,
-                "SQLite",
-                "Уже сканировали" + " " + sqlite_get_time(bullmer_sqlite_db),
-            )
             print("Уже сканировали " + sqlite_get_time(bullmer_sqlite_db))
+
+            top = Tk()
+            top.geometry("200x200+10+10")
+            top.title("SQLite")
+
+            # make font template
+            appHighlightFont = font.Font(family="Helvetica", size=15, weight="bold")
+            font.families()
+
+            # create listbox object
+            listbox1 = Listbox(
+                top,
+                height=8,
+                width=18,
+                bg="lightgrey",
+                activestyle="dotbox",
+                font=appHighlightFont,
+                fg="red",
+            )
+            listbox1.insert(1, "Уже сканировали")
+            listbox1.insert(2, sqlite_get_time(bullmer_sqlite_db))
+            listbox1.grid(row=1, column=1, sticky=W, pady=2)
+            top.mainloop()
 
         # записывает отсканированную раскладку в sqlite
         sqlite_post(form.lineEdit.text(), bullmer_sqlite_db)
@@ -333,6 +371,7 @@ async def main():
             for symbol in arduinostring:
                 symbols += symbol
             indices = get_indices("1", symbols)
+
             if len(indices) <= 2:
                 try:
                     form.lcdNumber.display(drills[indices[0]])
@@ -344,6 +383,7 @@ async def main():
                     form.lcdNumber_2.display(None)
 
                     # запускаем функцию сравнения значений селектора и базы. Управляем окном.
+
                 if comparison(
                     form.lcdNumber.value(), form.lcdNumber_3.value()
                 ) and comparison(
@@ -351,10 +391,9 @@ async def main():
                     form.lcdNumber_4.value() and form.lcdNumber_2.value(),
                 ):
                     window.hide()
-                    return 1
+
                 else:
                     window.show()
-                    return 0
 
             else:
                 form.lcdNumber.display(None)
@@ -391,7 +430,7 @@ async def main():
     timer1.timeout.connect(read_serial_arduino)  # connect it to your update function
     timer1.start(1000)  # set it to timeout in 5000 ms
 
-    # обновление строки с ардуино и lcd окон на интерфейсе
+    # проверка логов
     timer2 = QtCore.QTimer()  # set up your QTimer
     timer2.timeout.connect(logchk)  # connect it to your update function
     timer2.start(1000)  # set it to timeout in 5000 ms
