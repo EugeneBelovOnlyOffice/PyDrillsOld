@@ -2,12 +2,12 @@ import serial
 import asyncio
 import time
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QPushButton
+from PyQt5.QtWidgets import QApplication, QPushButton, QMessageBox
 from PyQt5 import QtCore
 import requests
 import glob
 import os
-import pandas as pd
+import pandas as pd  # используем для анализа логов и трекинга их изменений
 import json
 import sqlite3
 from datetime import datetime
@@ -33,7 +33,7 @@ bullmer_sqlite_db = "bullmersqlite.db"
 bullmer_log_folder_filter = "c:\\TEMP\*.csv"
 
 # инициализация названия булмера
-bullmer_db_log_name = "4"
+bullmer_db_log_name = "2"
 
 # инициализация точки входа для получение сверел с бд
 drills_db = "http://10.55.128.67:5000/cutting/drills"
@@ -47,6 +47,8 @@ current_db = "http://10.55.128.67:5000/cutting/currentBullmerLog"
 # инициализация ЧАСТИ строки названия nextgen - влияет на поиск окна nextgen, чтобы нажать клавишу редактора
 nextgen_name = "NextGeneration R7.8.1"  # или "Nextgen 8.3.0"
 
+# пароль бригадира
+supervisor_pass = "bucut"
 
 # Создаем глобальный DataFrame
 ##############################################################################################
@@ -77,7 +79,7 @@ dfglobal.drop(index=dfglobal.index[-1], axis=0, inplace=True)
 
 
 # эта функция кликает по кнопке в nextgen
-def nextgen_clicker():
+def nextgen_clicker(self):
     try:
         # здесь мы ищем наиболее подходящее окно по названию
         handle = pywinauto.findwindows.find_window(best_match=nextgen_name)
@@ -92,6 +94,7 @@ def nextgen_clicker():
         ).СписокзаданийPane.СписокзаданийPane2.itsQueueEditPane.click_input()
     except:
         print("Запустите NextGen")
+        QMessageBox.about(self, "Nextgen", "Запустите Nextgen")
 
 
 # функция, строит массив из сверел (два элемента). Сверла, вынутые с селектора
@@ -200,21 +203,25 @@ async def main():
                     "Bild": dfglobal.loc[
                         len(dfglobal) - 1, "Bild                "
                     ].lstrip(),  # string
-                    "DStart": dfglobal.loc[len(dfglobal) - 1, "Start    .1"].rstrip()
+                    "DStart": dfglobal.loc[len(dfglobal) - 1, "Start    .1"]
+                    .rstrip()
+                    .replace(".", "-")
                     + " "
                     + dfglobal.loc[len(dfglobal) - 1, "Start    "].rstrip(),  # string
-                    "DEnde": dfglobal.loc[len(dfglobal) - 1, "Ende     .1"].rstrip()
+                    "DEnde": dfglobal.loc[len(dfglobal) - 1, "Ende     .1"]
+                    .rstrip()
+                    .replace(".", "-")
                     + " "
                     + dfglobal.loc[len(dfglobal) - 1, "Ende     "].rstrip(),  # string
-                    "JOB": dfglobal.loc[
-                        len(dfglobal) - 1, "JOB[min]"
-                    ].lstrip(),  # number
-                    "CUT": dfglobal.loc[
-                        len(dfglobal) - 1, "CUT[min]"
-                    ].lstrip(),  # number
-                    "Bite": dfglobal.loc[
-                        len(dfglobal) - 1, "Bite[min]"
-                    ].lstrip(),  # number
+                    "JOB": dfglobal.loc[len(dfglobal) - 1, "JOB[min]"]
+                    .lstrip()
+                    .replace(",", "."),  # number
+                    "CUT": dfglobal.loc[len(dfglobal) - 1, "CUT[min]"]
+                    .lstrip()
+                    .replace(",", "."),  # number
+                    "Bite": dfglobal.loc[len(dfglobal) - 1, "Bite[min]"]
+                    .lstrip()
+                    .replace(",", "."),  # number
                     "Neben": str(
                         dfglobal.loc[len(dfglobal) - 1, "Neben[min]"]
                     ).lstrip(),  # number
@@ -223,13 +230,16 @@ async def main():
                     "Hdrills": None,  # number
                 }
             }
-            json_data = json.dumps(data)
-            requests.post(blogs_db, data=json_data)
-            print(json_data)
+
+            print(requests.post(blogs_db, json=data, timeout=2.50))
+            print(data)
 
     # эта функция срабатывает при нажатии кнопки "Очистить"
     def btn_clk():
         form.lineEdit.clear()
+
+    def btn_clk_sv():
+        form.lineEdit_2.clear()
 
     # эта функция срабатывает при изменении текста в поле id раскладки
     def ln_changed():
@@ -243,13 +253,20 @@ async def main():
             form.lcdNumber_4.display(x.json().get(("Сверло2", None)))
             print(x.json().get("Сверло1", None))
             print(x.json().get(("Сверло2", None)))
-            nextgen_clicker()  # если раскладка найдена в базе - запускаем редактор NextGen
+            nextgen_clicker(
+                window
+            )  # если раскладка найдена в базе - запускаем редактор NextGen
         except:
             form.lcdNumber_3.display(None)
             form.lcdNumber_4.display(None)
 
         # проверяем, сканировали ли мы эту раскладку ранее (проверяем последнюю запись в SQLite). Если да, выводим worning
         if sqlite_get(bullmer_sqlite_db) == form.lineEdit.text():
+            QMessageBox.about(
+                window,
+                "SQLite",
+                "Уже сканировали" + " " + sqlite_get_time(bullmer_sqlite_db),
+            )
             print("Уже сканировали " + sqlite_get_time(bullmer_sqlite_db))
 
         # записывает отсканированную раскладку в sqlite
@@ -273,6 +290,14 @@ async def main():
         else:
             print(requests.post(current_db, json=data, timeout=2.50))
             print(data)
+
+    # эта функция срабатывает при изменении текста в поле пароль бригадира
+    def ln_changed_sv():
+        if form.lineEdit_2.text() == supervisor_pass:
+            window.setWindowFlag(QtCore.Qt.WindowStaysOnTopHint, False)
+            print("sv password")
+        else:
+            window.setWindowFlag(QtCore.Qt.WindowStaysOnTopHint, True)
 
     # эта функция получает строку с ардуино и вносит значения в интерфейс
     def read_serial_arduino():
@@ -349,11 +374,17 @@ async def main():
 
     window.show()
 
-    # настраиваем сценарий для элемента pushButton
+    # настраиваем сценарий для элемента pushButton (под id раскладки)
     form.pushButton.clicked.connect(btn_clk)
 
-    # настраиваем сценарий для элемента lineEdit
+    # настраиваем сценарий для элемента pushButton_2 (пароль бригадира)
+    form.pushButton_2.clicked.connect(btn_clk_sv)
+
+    # настраиваем сценарий для элемента lineEdit (id раскладки)
     form.lineEdit.textChanged.connect(ln_changed)
+
+    # настраиваем сценарий для элемента lineEdit_2 (пароль супервайзера)
+    form.lineEdit_2.textChanged.connect(ln_changed_sv)
 
     # обновление строки с ардуино и lcd окон на интерфейсе
     timer1 = QtCore.QTimer()  # set up your QTimer
