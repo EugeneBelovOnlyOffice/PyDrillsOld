@@ -15,38 +15,48 @@ import pywinauto
 import warnings
 from tkinter import *
 from tkinter import font
+import yaml
 
 # инициализации
 ##############################################################################################
+
+# читаем файл конфигурации
+
+with open("config.yml", "r") as file:
+    Bullmer = yaml.safe_load(file)
+
 # иницилизация имени базы SQLite
-bullmer_sqlite_db = "bullmersqlite.db"
+bullmer_sqlite_db = Bullmer["Bullmer"]["bullmer_sqlite_db"]
 
 # иницилизация самый ранний файл csv в каталоге булмера (маска поиска)
-bullmer_log_folder_filter = "c:\\TEMP\*.csv"
+bullmer_log_folder_filter = Bullmer["Bullmer"]["bullmer_log_folder_filter"] + "\*.csv"
 
 # инициализация названия булмера
-bullmer_db_log_name = "2"
+bullmer_db_log_name = Bullmer["Bullmer"]["bullmer_db_log_name"]
 
 # инициализация точки входа для получение сверел с бд
-drills_db = "http://10.55.128.67:5000/cutting/drills"
+drills_db = Bullmer["Bullmer"]["drills_db"]
 
 # инициализация точки входа отправки изменений в логе(статистики) в бд
-blogs_db = "http://10.55.128.67:5000/cutting/bullmerStat"
+blogs_db = Bullmer["Bullmer"]["blogs_db"]
 
 # инициализация точки входа отправки текущей и предидущей раскладок в базу экрана раскроя
-current_db = "http://10.55.128.67:5000/cutting/currentBullmerLog"
+current_db = Bullmer["Bullmer"]["current_db"]
 
 # инициализация ЧАСТИ строки названия nextgen - влияет на поиск окна nextgen, чтобы нажать клавишу редактора
-nextgen_name = "NextGeneration R7.8.1"  # или "Nextgen 8.3.0"
+nextgen_name = Bullmer["Bullmer"]["nextgen_name"]  # или "Nextgen 8.3.0"
 
 # пароль бригадира
-supervisor_pass = "bucut"
+supervisor_pass = Bullmer["Bullmer"]["supervisor_pass"]
+
+# номер Serial порта
+serial_port = Bullmer["Bullmer"]["serial_port"]
 
 #############################################################################################
 # иницилизация порта Ардуино
 ser = serial.Serial()
 ser.baudrate = 9600
-ser.port = "COM6"
+ser.port = serial_port
 ser.open()
 time.sleep(2)
 
@@ -333,71 +343,77 @@ async def main():
     def ln_changed_sv():
         if form.lineEdit_2.text() == supervisor_pass:
             window.setWindowFlag(QtCore.Qt.WindowStaysOnTopHint, False)
-            print("sv password")
+            form.lineEdit_2.setStyleSheet(
+                "QLineEdit" "{" "background : lightgreen;" "}"
+            )
+
         else:
             window.setWindowFlag(QtCore.Qt.WindowStaysOnTopHint, True)
+            form.lineEdit_2.setStyleSheet("QLineEdit" "{" "background : white;" "}")
 
     # эта функция получает строку с ардуино и вносит значения в интерфейс
     def read_serial_arduino():
-        ser.write(b"1")
+        try:
+            ser.write(b"1")
+            # убираем ворнинги от asyncio
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                asyncio.sleep(0.1)
 
-        # убираем ворнинги от asyncio
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            asyncio.sleep(0.1)
+            while ser.in_waiting:
+                arduinostring = ser.readline().decode("utf-8")[:-2]
+                form.label_3.setText(arduinostring)
+                symbols = []  # массив символов - показаний ардуино
+                drills = [
+                    "2",
+                    "3",
+                    "4",
+                    "6",
+                    "8",
+                    "10",
+                    "12",
+                    "15",
+                    "17",
+                    "18",
+                    "20",
+                    "21",
+                    "22",
+                    "24",
+                    "26",
+                ]  # массив обозначений сверел селектора
 
-        while ser.in_waiting:
-            arduinostring = ser.readline().decode("utf-8")[:-2]
-            form.label_3.setText(arduinostring)
-            symbols = []  # массив символов - показаний ардуино
-            drills = [
-                "2",
-                "3",
-                "4",
-                "6",
-                "8",
-                "10",
-                "12",
-                "15",
-                "17",
-                "18",
-                "20",
-                "21",
-                "22",
-                "24",
-                "26",
-            ]  # массив обозначений сверел селектора
+                for symbol in arduinostring:
+                    symbols += symbol
+                indices = get_indices("1", symbols)
 
-            for symbol in arduinostring:
-                symbols += symbol
-            indices = get_indices("1", symbols)
+                if len(indices) <= 2:
+                    try:
+                        form.lcdNumber.display(drills[indices[0]])
+                    except IndexError:
+                        form.lcdNumber.display(None)
+                    try:
+                        form.lcdNumber_2.display(drills[indices[1]])
+                    except IndexError:
+                        form.lcdNumber_2.display(None)
 
-            if len(indices) <= 2:
-                try:
-                    form.lcdNumber.display(drills[indices[0]])
-                except IndexError:
-                    form.lcdNumber.display(None)
-                try:
-                    form.lcdNumber_2.display(drills[indices[1]])
-                except IndexError:
-                    form.lcdNumber_2.display(None)
+                        # запускаем функцию сравнения значений селектора и базы. Управляем окном.
 
-                    # запускаем функцию сравнения значений селектора и базы. Управляем окном.
+                    if comparison(
+                        form.lcdNumber.value(), form.lcdNumber_3.value()
+                    ) and comparison(
+                        form.lcdNumber_2.value(),
+                        form.lcdNumber_4.value() and form.lcdNumber_2.value(),
+                    ):
+                        window.hide()
 
-                if comparison(
-                    form.lcdNumber.value(), form.lcdNumber_3.value()
-                ) and comparison(
-                    form.lcdNumber_2.value(),
-                    form.lcdNumber_4.value() and form.lcdNumber_2.value(),
-                ):
-                    window.hide()
+                    else:
+                        window.show()
 
                 else:
-                    window.show()
-
-            else:
-                form.lcdNumber.display(None)
-                form.lcdNumber_2.display(None)
+                    form.lcdNumber.display(None)
+                    form.lcdNumber_2.display(None)
+        except:
+            print("Ошибка чтения ардуино")
 
     # подключаем файл, полученный в QtDesigner
     Form, Window = uic.loadUiType("interface.ui")
