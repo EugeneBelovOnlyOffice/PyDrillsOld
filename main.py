@@ -16,6 +16,9 @@ import warnings
 from tkinter import *
 from tkinter import font
 import yaml
+from bleak_winrt import _winrt
+
+_winrt.uninit_apartment()  # Убираем ошибку при запуске (https://github.com/hbldh/bleak/issues/423)
 
 # инициализации
 ##############################################################################################
@@ -48,6 +51,7 @@ nextgen_name = Bullmer["Bullmer"]["nextgen_name"]  # или "Nextgen 8.3.0"
 
 # пароль бригадира
 supervisor_pass = Bullmer["Bullmer"]["supervisor_pass"]
+
 
 # номер Serial порта
 serial_port = Bullmer["Bullmer"]["serial_port"]
@@ -223,7 +227,7 @@ async def main():
         else:
             # если произошла запись в логи, то будет выполняться эта часть. Сюда нужно вставить http post в БД Bullmer
             dfglobal = df1.copy()
-            btn_clk()
+            btn_clk()  # очищаем окно ввода
             print("Файл не совпадает. Записываем в SQL")
 
             # этот запрос отправляет данные на сервер. пишет статистику Булмер в базу
@@ -266,7 +270,7 @@ async def main():
 
     # эта функция срабатывает при нажатии кнопки "Очистить"
     def btn_clk():
-        form.lineEdit.clear()
+        form.lineEdit.setText("")
 
     def btn_clk_sv():
         form.lineEdit_2.clear()
@@ -282,7 +286,7 @@ async def main():
             form.lcdNumber_3.display(x.json().get("Сверло1", None))
             form.lcdNumber_4.display(x.json().get(("Сверло2", None)))
             print(x.json().get("Сверло1", None))
-            print(x.json().get(("Сверло2", None)))
+            print(x.json().get("Сверло2", None))
 
             nextgen_clicker()  # если раскладка найдена в базе - запускаем редактор NextGen
 
@@ -353,67 +357,88 @@ async def main():
 
     # эта функция получает строку с ардуино и вносит значения в интерфейс
     def read_serial_arduino():
-        try:
-            ser.write(b"1")
-            # убираем ворнинги от asyncio
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
-                asyncio.sleep(0.1)
+        if ser.isOpen() != True:
+            ser.open()
+        else:
+            pass
 
-            while ser.in_waiting:
-                arduinostring = ser.readline().decode("utf-8")[:-2]
-                form.label_3.setText(arduinostring)
-                symbols = []  # массив символов - показаний ардуино
-                drills = [
-                    "2",
-                    "3",
-                    "4",
-                    "6",
-                    "8",
-                    "10",
-                    "12",
-                    "15",
-                    "17",
-                    "18",
-                    "20",
-                    "21",
-                    "22",
-                    "24",
-                    "26",
-                ]  # массив обозначений сверел селектора
+        ser.write(b"1")
+        # убираем ворнинги от asyncio
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            asyncio.sleep(0.1)
 
-                for symbol in arduinostring:
-                    symbols += symbol
-                indices = get_indices("1", symbols)
+        while ser.in_waiting:
+            arduinostring = ser.readline().decode("utf-8")[:-2]
+            form.label_3.setText(arduinostring)
+            symbols = []  # массив символов - показаний ардуино
+            drills = [
+                "2",
+                "3",
+                "4",
+                "6",
+                "8",
+                "10",
+                "12",
+                "15",
+                "17",
+                "18",
+                "20",
+                "21",
+                "22",
+                "24",
+                "26",
+            ]  # массив обозначений сверел селектора
 
-                if len(indices) <= 2:
-                    try:
-                        form.lcdNumber.display(drills[indices[0]])
-                    except IndexError:
-                        form.lcdNumber.display(None)
-                    try:
-                        form.lcdNumber_2.display(drills[indices[1]])
-                    except IndexError:
-                        form.lcdNumber_2.display(None)
+            for symbol in arduinostring:
+                symbols += symbol
+            indices = get_indices("1", symbols)
 
-                        # запускаем функцию сравнения значений селектора и базы. Управляем окном.
+            if len(indices) <= 2:
+                try:
+                    form.lcdNumber.display(drills[indices[0]])
+                except IndexError:
+                    form.lcdNumber.display(None)
+                try:
+                    form.lcdNumber_2.display(drills[indices[1]])
+                except IndexError:
+                    form.lcdNumber_2.display(None)
 
-                    if comparison(
-                        form.lcdNumber.value(), form.lcdNumber_3.value()
-                    ) and comparison(
-                        form.lcdNumber_2.value(),
-                        form.lcdNumber_4.value() and form.lcdNumber_2.value(),
-                    ):
+                # запускаем функцию сравнения значений селектора и базы. Управляем окном.
+                ########################################################################
+                url = drills_db
+                myobj = {"markerID": form.lineEdit.text()}
+                x = requests.get(url, myobj)
+                try:
+                    drill1_sql = int(x.json().get("Сверло1", None))
+                except:
+                    drill1_sql = 0
+
+                try:
+                    drill2_sql = int(x.json().get("Сверло2", None))
+                except:
+                    drill2_sql = 0
+
+                try:
+                    drill_id = x.json().get("id", None)
+                except:
+                    drill_id = 0
+
+                drill1_window = form.lcdNumber.intValue()
+                drill2_window = form.lcdNumber_2.intValue()
+
+                if form.lineEdit.text() != "" and drill_id != 0:
+                    if drill1_sql == drill1_window and drill2_sql == drill2_window:
                         window.hide()
-
                     else:
                         window.show()
-
                 else:
-                    form.lcdNumber.display(None)
-                    form.lcdNumber_2.display(None)
-        except:
-            print("Ошибка чтения ардуино")
+                    window.show()
+
+                #########################################################################
+            else:
+                form.lcdNumber.display(None)
+                form.lcdNumber_2.display(None)
 
     # подключаем файл, полученный в QtDesigner
     Form, Window = uic.loadUiType("interface.ui")
