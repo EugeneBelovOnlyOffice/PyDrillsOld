@@ -462,7 +462,7 @@ async def main():
     form.pushButton_2.clicked.connect(btn_clk_sv)
 
     # настраиваем сценарий для элемента lineEdit (id раскладки)
-    form.lineEdit.textChanged.connect(ln_changed)
+    form.lineEdit.returnPressed.connect(ln_changed)
 
     # настраиваем сценарий для элемента lineEdit_2 (пароль супервайзера)
     form.lineEdit_2.textChanged.connect(ln_changed_sv)
