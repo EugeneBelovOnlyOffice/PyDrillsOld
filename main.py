@@ -4,6 +4,7 @@ import time
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QPushButton
 from PyQt5 import QtCore
+from PyQt5.QtCore import QTimer
 import requests
 import glob
 import os
@@ -288,60 +289,60 @@ async def main():
             print(x.json().get("Сверло1", None))
             print(x.json().get("Сверло2", None))
 
-            nextgen_clicker()  # если раскладка найдена в базе - запускаем редактор NextGen
+            # проверяем, сканировали ли мы эту раскладку ранее (проверяем последнюю запись в SQLite). Если да, выводим worning
+            if sqlite_get(bullmer_sqlite_db) == form.lineEdit.text():
+                print("Уже сканировали " + sqlite_get_time(bullmer_sqlite_db))
+
+                top = Tk()
+                top.geometry("200x200+10+10")
+                top.title("SQLite")
+
+                # make font template
+                appHighlightFont = font.Font(family="Helvetica", size=15, weight="bold")
+                font.families()
+
+                # create listbox object
+                listbox1 = Listbox(
+                    top,
+                    height=8,
+                    width=18,
+                    bg="lightgrey",
+                    activestyle="dotbox",
+                    font=appHighlightFont,
+                    fg="red",
+                )
+                listbox1.insert(1, "Уже сканировали")
+                listbox1.insert(2, sqlite_get_time(bullmer_sqlite_db))
+                listbox1.grid(row=1, column=1, sticky=W, pady=2)
+                top.mainloop()
+
+            nextgen_clicker()  # запускаем редактор NextGen
+
+            # записывает отсканированную раскладку в sqlite
+            sqlite_post(form.lineEdit.text(), bullmer_sqlite_db)
+
+            # записываем текущую и предыдущую раскладки в sql бд Bullmer.current
+            url = current_db
+            data = {
+                "data": {
+                    "idrask": str(sqlite_get_last_two_records(bullmer_sqlite_db)[0])[
+                        :-2
+                    ][1:],  # string
+                    "idraspost": str(sqlite_get_last_two_records(bullmer_sqlite_db)[1])[
+                        :-2
+                    ][1:],  # string
+                    "komp": "Bullmer" + str(bullmer_db_log_name),  # string
+                }
+            }
+            if form.lineEdit.text() == "":
+                pass
+            else:
+                print(requests.post(current_db, json=data, timeout=2.50))
+                print(data)
 
         except:
             form.lcdNumber_3.display(None)
             form.lcdNumber_4.display(None)
-
-        # проверяем, сканировали ли мы эту раскладку ранее (проверяем последнюю запись в SQLite). Если да, выводим worning
-        if sqlite_get(bullmer_sqlite_db) == form.lineEdit.text():
-            print("Уже сканировали " + sqlite_get_time(bullmer_sqlite_db))
-
-            top = Tk()
-            top.geometry("200x200+10+10")
-            top.title("SQLite")
-
-            # make font template
-            appHighlightFont = font.Font(family="Helvetica", size=15, weight="bold")
-            font.families()
-
-            # create listbox object
-            listbox1 = Listbox(
-                top,
-                height=8,
-                width=18,
-                bg="lightgrey",
-                activestyle="dotbox",
-                font=appHighlightFont,
-                fg="red",
-            )
-            listbox1.insert(1, "Уже сканировали")
-            listbox1.insert(2, sqlite_get_time(bullmer_sqlite_db))
-            listbox1.grid(row=1, column=1, sticky=W, pady=2)
-            top.mainloop()
-
-        # записывает отсканированную раскладку в sqlite
-        sqlite_post(form.lineEdit.text(), bullmer_sqlite_db)
-
-        # записываем текущую и предыдущую раскладки в sql бд Bullmer.current
-        url = current_db
-        data = {
-            "data": {
-                "idrask": str(sqlite_get_last_two_records(bullmer_sqlite_db)[0])[:-2][
-                    1:
-                ],  # string
-                "idraspost": str(sqlite_get_last_two_records(bullmer_sqlite_db)[1])[
-                    :-2
-                ][1:],  # string
-                "komp": "Bullmer" + str(bullmer_db_log_name),  # string
-            }
-        }
-        if form.lineEdit.text() == "":
-            pass
-        else:
-            print(requests.post(current_db, json=data, timeout=2.50))
-            print(data)
 
     # эта функция срабатывает при изменении текста в поле пароль бригадира
     def ln_changed_sv():
