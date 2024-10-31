@@ -2,14 +2,12 @@ import serial
 import asyncio
 import time
 from PyQt5 import uic
-from PyQt5.QtWidgets import QApplication, QPushButton
+from PyQt5.QtWidgets import QApplication
 from PyQt5 import QtCore
-from PyQt5.QtCore import QTimer
 import requests
 import glob
 import os
 import pandas as pd  # используем для анализа логов и трекинга их изменений
-import json
 import sqlite3
 from datetime import datetime
 import pywinauto
@@ -272,6 +270,8 @@ async def main():
     # эта функция срабатывает при нажатии кнопки "Очистить"
     def btn_clk():
         form.lineEdit.setText("")
+        form.lcdNumber_3.display(None)
+        form.lcdNumber_4.display(None)
 
     def btn_clk_sv():
         form.lineEdit_2.clear()
