@@ -16,6 +16,7 @@ from tkinter import *
 from tkinter import font
 import yaml
 from bleak_winrt import _winrt
+import datetime
 
 _winrt.uninit_apartment()  # Убираем ошибку при запуске (https://github.com/hbldh/bleak/issues/423)
 
@@ -66,28 +67,31 @@ time.sleep(2)
 # Создаем глобальный DataFrame
 ##############################################################################################
 # возвращаем самый ранний файл csv в каталоге логов
-list_of_files = glob.glob(bullmer_log_folder_filter)  # noqa: F405
-latest_file = max(list_of_files, key=os.path.getctime)
+try:
+    list_of_files = glob.glob(bullmer_log_folder_filter)
+    latest_file = max(list_of_files, key=os.path.getctime)
 
-# создаем датафрейм и выводим его в консоль
-columns = [
-    0,
-    17,
-    18,
-    20,
-    21,
-    10,
-    11,
-    14,
-    15,
-    37,
-    45,
-    46,
-    2,
-]
+    # создаем датафрейм и выводим его в консоль
+    columns = [
+        0,
+        17,
+        18,
+        20,
+        21,
+        10,
+        11,
+        14,
+        15,
+        37,
+        45,
+        46,
+        2,
+    ]
 
-dfglobal = pd.read_csv(latest_file, sep=";", usecols=columns)
-dfglobal.drop(index=dfglobal.index[-1], axis=0, inplace=True)
+    dfglobal = pd.read_csv(latest_file, sep=";", usecols=columns)
+    dfglobal.drop(index=dfglobal.index[-1], axis=0, inplace=True)
+except:
+    print("отсутствуют данные в логе или файл логов")
 ##############################################################################################
 
 
@@ -229,21 +233,36 @@ async def main():
             btn_clk()  # очищаем окно ввода
             print("Файл не совпадает. Записываем в SQL")
 
+            DStart = (
+                dfglobal.loc[len(dfglobal) - 1, "Start    .1"]
+                .rstrip()
+                .replace(".", "-")
+            )
+            DEnde = (
+                dfglobal.loc[len(dfglobal) - 1, "Ende     .1"]
+                .rstrip()
+                .replace(".", "-")
+            )
+
             # этот запрос отправляет данные на сервер. пишет статистику Булмер в базу
             data = {
                 "data": {
                     "cutter": bullmer_db_log_name,  # number
-                    "Bild": dfglobal.loc[
-                        len(dfglobal) - 1, "Bild                "
-                    ].lstrip(),  # string
-                    "DStart": dfglobal.loc[len(dfglobal) - 1, "Start    .1"]
-                    .rstrip()
-                    .replace(".", "-")
+                    "Bild": dfglobal.loc[len(dfglobal) - 1, "Bild                "]
+                    .lstrip()
+                    .rstrip(),  # string
+                    ############################## конвертируем дату в формат SQL
+                    "DStart": datetime.datetime.strptime(DStart, "%d-%m-%y").strftime(
+                        "%Y-%m-%d"
+                    )
+                    ############################## конвертируем дату в формат SQL
                     + " "
                     + dfglobal.loc[len(dfglobal) - 1, "Start    "].rstrip(),  # string
-                    "DEnde": dfglobal.loc[len(dfglobal) - 1, "Ende     .1"]
-                    .rstrip()
-                    .replace(".", "-")
+                    ############################## конвертируем дату в формат SQL
+                    "DEnde": datetime.datetime.strptime(DEnde, "%d-%m-%y").strftime(
+                        "%Y-%m-%d"
+                    )
+                    ############################## конвертируем дату в формат SQL
                     + " "
                     + dfglobal.loc[len(dfglobal) - 1, "Ende     "].rstrip(),  # string
                     "JOB": dfglobal.loc[len(dfglobal) - 1, "JOB[min]"]
