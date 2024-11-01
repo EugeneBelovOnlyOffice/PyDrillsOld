@@ -90,8 +90,29 @@ try:
 
     dfglobal = pd.read_csv(latest_file, sep=";", usecols=columns)
     dfglobal.drop(index=dfglobal.index[-1], axis=0, inplace=True)
-except:
-    print("отсутствуют данные в логе или файл логов")
+except IndexError:
+    list_of_files = glob.glob(bullmer_log_folder_filter)
+    latest_file = max(list_of_files, key=os.path.getctime)
+
+    # создаем датафрейм и выводим его в консоль
+    columns = [
+        0,
+        17,
+        18,
+        20,
+        21,
+        10,
+        11,
+        14,
+        15,
+        37,
+        45,
+        46,
+        2,
+    ]
+
+    dfglobal = pd.read_csv(latest_file, sep=";", usecols=columns)
+
 ##############################################################################################
 
 
@@ -198,93 +219,102 @@ async def main():
 
     # функция, которая проверяет лог и стирает id раскладки из главного окна (тем самым делает его не скрытым)
     def logchk():
-        # возвращаем самый ранний файл csv в каталоге логов
-        list_of_files = glob.glob(bullmer_log_folder_filter)
-        latest_file = max(list_of_files, key=os.path.getctime)
-        # print(latest_file)
+        try:
+            # возвращаем самый ранний файл csv в каталоге логов
+            list_of_files = glob.glob(bullmer_log_folder_filter)
+            latest_file = max(list_of_files, key=os.path.getctime)
+            # print(latest_file)
 
-        # создаем датафрейм и выводим его в консоль
-        columns = [
-            0,
-            17,
-            18,
-            20,
-            21,
-            10,
-            11,
-            14,
-            15,
-            37,
-            45,
-            46,
-            2,
-        ]
+            # создаем датафрейм и выводим его в консоль
+            columns = [
+                0,
+                17,
+                18,
+                20,
+                21,
+                10,
+                11,
+                14,
+                15,
+                37,
+                45,
+                46,
+                2,
+            ]
 
-        df1 = pd.read_csv(latest_file, sep=";", usecols=columns)
-        df1.drop(index=df1.index[-1], axis=0, inplace=True)
-        global dfglobal
+            df1 = pd.read_csv(latest_file, sep=";", usecols=columns)
+            df1.drop(index=df1.index[-1], axis=0, inplace=True)
+            global dfglobal
 
-        if dfglobal.equals(df1):
-            pass  # "Файл совпадает"
+            if dfglobal.equals(df1):
+                pass  # "Файл совпадает"
 
-        else:
-            # если произошла запись в логи, то будет выполняться эта часть. Сюда нужно вставить http post в БД Bullmer
-            dfglobal = df1.copy()
-            btn_clk()  # очищаем окно ввода
-            print("Файл не совпадает. Записываем в SQL")
+            else:
+                # если произошла запись в логи, то будет выполняться эта часть. Сюда нужно вставить http post в БД Bullmer
+                dfglobal = df1.copy()
+                btn_clk()  # очищаем окно ввода
+                print("Файл не совпадает. Записываем в SQL")
 
-            DStart = (
-                dfglobal.loc[len(dfglobal) - 1, "Start    .1"]
-                .rstrip()
-                .replace(".", "-")
-            )
-            DEnde = (
-                dfglobal.loc[len(dfglobal) - 1, "Ende     .1"]
-                .rstrip()
-                .replace(".", "-")
-            )
+                DStart = (
+                    dfglobal.loc[len(dfglobal) - 1, "Start    .1"]
+                    .rstrip()
+                    .replace(".", "-")
+                )
+                DEnde = (
+                    dfglobal.loc[len(dfglobal) - 1, "Ende     .1"]
+                    .rstrip()
+                    .replace(".", "-")
+                )
 
-            # этот запрос отправляет данные на сервер. пишет статистику Булмер в базу
-            data = {
-                "data": {
-                    "cutter": bullmer_db_log_name,  # number
-                    "Bild": dfglobal.loc[len(dfglobal) - 1, "Bild                "]
-                    .lstrip()
-                    .rstrip(),  # string
-                    ############################## конвертируем дату в формат SQL
-                    "DStart": datetime.datetime.strptime(DStart, "%d-%m-%y").strftime(
-                        "%Y-%m-%d"
-                    )
-                    ############################## конвертируем дату в формат SQL
-                    + " "
-                    + dfglobal.loc[len(dfglobal) - 1, "Start    "].rstrip(),  # string
-                    ############################## конвертируем дату в формат SQL
-                    "DEnde": datetime.datetime.strptime(DEnde, "%d-%m-%y").strftime(
-                        "%Y-%m-%d"
-                    )
-                    ############################## конвертируем дату в формат SQL
-                    + " "
-                    + dfglobal.loc[len(dfglobal) - 1, "Ende     "].rstrip(),  # string
-                    "JOB": dfglobal.loc[len(dfglobal) - 1, "JOB[min]"]
-                    .lstrip()
-                    .replace(",", "."),  # number
-                    "CUT": dfglobal.loc[len(dfglobal) - 1, "CUT[min]"]
-                    .lstrip()
-                    .replace(",", "."),  # number
-                    "Bite": dfglobal.loc[len(dfglobal) - 1, "Bite[min]"]
-                    .lstrip()
-                    .replace(",", "."),  # number
-                    "Neben": str(
-                        dfglobal.loc[len(dfglobal) - 1, "Neben[min]"]
-                    ).lstrip(),  # number
-                    "idRask": sqlite_get(bullmer_sqlite_db),  # string, данные в SQLite
-                    "Drills": None,  # number
-                    "Hdrills": None,  # number
+                # этот запрос отправляет данные на сервер. пишет статистику Булмер в базу
+                data = {
+                    "data": {
+                        "cutter": bullmer_db_log_name,  # number
+                        "Bild": dfglobal.loc[len(dfglobal) - 1, "Bild                "]
+                        .lstrip()
+                        .rstrip(),  # string
+                        ############################## конвертируем дату в формат SQL
+                        "DStart": datetime.datetime.strptime(
+                            DStart, "%d-%m-%y"
+                        ).strftime("%Y-%m-%d")
+                        ############################## конвертируем дату в формат SQL
+                        + " "
+                        + dfglobal.loc[
+                            len(dfglobal) - 1, "Start    "
+                        ].rstrip(),  # string
+                        ############################## конвертируем дату в формат SQL
+                        "DEnde": datetime.datetime.strptime(DEnde, "%d-%m-%y").strftime(
+                            "%Y-%m-%d"
+                        )
+                        ############################## конвертируем дату в формат SQL
+                        + " "
+                        + dfglobal.loc[
+                            len(dfglobal) - 1, "Ende     "
+                        ].rstrip(),  # string
+                        "JOB": dfglobal.loc[len(dfglobal) - 1, "JOB[min]"]
+                        .lstrip()
+                        .replace(",", "."),  # number
+                        "CUT": dfglobal.loc[len(dfglobal) - 1, "CUT[min]"]
+                        .lstrip()
+                        .replace(",", "."),  # number
+                        "Bite": dfglobal.loc[len(dfglobal) - 1, "Bite[min]"]
+                        .lstrip()
+                        .replace(",", "."),  # number
+                        "Neben": str(
+                            dfglobal.loc[len(dfglobal) - 1, "Neben[min]"]
+                        ).lstrip(),  # number
+                        "idRask": sqlite_get(
+                            bullmer_sqlite_db
+                        ),  # string, данные в SQLite
+                        "Drills": None,  # number
+                        "Hdrills": None,  # number
+                    }
                 }
-            }
 
-            print(requests.post(blogs_db, json=data, timeout=2.50))
-            print(data)
+                print(requests.post(blogs_db, json=data, timeout=2.50))
+                print(data)
+        except:
+            print("ошибка обработки логов")
 
     # эта функция срабатывает при нажатии кнопки "Очистить"
     def btn_clk():
