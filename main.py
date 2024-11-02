@@ -9,14 +9,14 @@ import glob
 import os
 import pandas as pd  # используем для анализа логов и трекинга их изменений
 import sqlite3
-from datetime import datetime
+import datetime
 import pywinauto
 import warnings
 from tkinter import *
 from tkinter import font
 import yaml
 from bleak_winrt import _winrt
-import datetime
+
 
 _winrt.uninit_apartment()  # Убираем ошибку при запуске (https://github.com/hbldh/bleak/issues/423)
 
@@ -90,6 +90,8 @@ try:
 
     dfglobal = pd.read_csv(latest_file, sep=";", usecols=columns)
     dfglobal.drop(index=dfglobal.index[-1], axis=0, inplace=True)
+
+# если лог пустой
 except IndexError:
     list_of_files = glob.glob(bullmer_log_folder_filter)
     latest_file = max(list_of_files, key=os.path.getctime)
@@ -112,6 +114,7 @@ except IndexError:
     ]
 
     dfglobal = pd.read_csv(latest_file, sep=";", usecols=columns)
+
 
 ##############################################################################################
 
@@ -210,7 +213,7 @@ async def main():
         if marker_id != "":
             cursor.execute(
                 "INSERT INTO idRasks (marker_id, datetime) VALUES (?,?)",
-                (marker_id, datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+                (marker_id, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
             )
 
             # Сохраняем изменения
@@ -322,6 +325,7 @@ async def main():
         form.lcdNumber_3.display(None)
         form.lcdNumber_4.display(None)
 
+    # эта функция срабатывает при нажатии кнопки "Очистить" пароль супервайзера
     def btn_clk_sv():
         form.lineEdit_2.clear()
 
@@ -334,7 +338,7 @@ async def main():
             # выводим ответ
 
             form.lcdNumber_3.display(x.json().get("Сверло1", None))
-            form.lcdNumber_4.display(x.json().get(("Сверло2", None)))
+            form.lcdNumber_4.display(x.json().get("Сверло2", None))
             print(x.json().get("Сверло1", None))
             print(x.json().get("Сверло2", None))
 
