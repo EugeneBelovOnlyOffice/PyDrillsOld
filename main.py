@@ -91,6 +91,7 @@ try:
     dfglobal = pd.read_csv(latest_file, sep=";", usecols=columns)
     dfglobal.drop(index=dfglobal.index[-1], axis=0, inplace=True)
 
+
 # если лог пустой
 except IndexError:
     list_of_files = glob.glob(bullmer_log_folder_filter)
@@ -254,7 +255,10 @@ async def main():
 
             else:
                 # если произошла запись в логи, то будет выполняться эта часть. Сюда нужно вставить http post в БД Bullmer
+                print(dfglobal)
                 dfglobal = df1.copy()
+                print(df1)
+
                 btn_clk()  # очищаем окно ввода
                 print("Файл не совпадает. Записываем в SQL")
 
@@ -460,7 +464,7 @@ async def main():
                 elif form.lcdNumber.intValue() == int(drills[indices[0]]):
                     form.lcdNumber.display(drills[indices[0]])
                     form.lcdNumber_2.display(drills[indices[1]])
-            else:
+            else:  # если вытащили больше двух
                 form.lcdNumber.display(None)
                 form.lcdNumber_2.display(None)
 
@@ -531,7 +535,7 @@ async def main():
     # проверка логов
     timer2 = QtCore.QTimer()  # set up your QTimer
     timer2.timeout.connect(logchk)  # connect it to your update function
-    timer2.start(1000)  # set it to timeout in 5000 ms
+    timer2.start(5000)  # set it to timeout in 5000 ms
 
     # запускаем окно программы
     app.exec()
