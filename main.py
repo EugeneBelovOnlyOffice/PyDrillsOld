@@ -448,51 +448,54 @@ async def main():
                 symbols += symbol
             indices = get_indices("1", symbols)
 
-            if len(indices) <= 2:
-                try:
+            if len(indices) == 1:  # если вытащили одно сверло
+                form.lcdNumber.display(drills[indices[0]])
+                form.lcdNumber_2.display(None)
+
+            elif len(indices) == 2:
+                # если вытащили два сверла
+                if form.lcdNumber.intValue() == int(drills[indices[1]]):
+                    form.lcdNumber.display(drills[indices[1]])
+                    form.lcdNumber_2.display(drills[indices[0]])
+                elif form.lcdNumber.intValue() == int(drills[indices[0]]):
                     form.lcdNumber.display(drills[indices[0]])
-                except IndexError:
-                    form.lcdNumber.display(None)
-                try:
                     form.lcdNumber_2.display(drills[indices[1]])
-                except IndexError:
-                    form.lcdNumber_2.display(None)
-
-                # запускаем функцию сравнения значений селектора и базы. Управляем окном.
-                ########################################################################
-                url = drills_db
-                myobj = {"markerID": form.lineEdit.text()}
-                x = requests.get(url, myobj)
-                try:
-                    drill1_sql = int(x.json().get("Сверло1", None))
-                except:
-                    drill1_sql = 0
-
-                try:
-                    drill2_sql = int(x.json().get("Сверло2", None))
-                except:
-                    drill2_sql = 0
-
-                try:
-                    drill_id = x.json().get("id", None)
-                except:
-                    drill_id = 0
-
-                drill1_window = form.lcdNumber.intValue()
-                drill2_window = form.lcdNumber_2.intValue()
-
-                if form.lineEdit.text() != "" and drill_id != 0:
-                    if drill1_sql == drill1_window and drill2_sql == drill2_window:
-                        window.hide()
-                    else:
-                        window.show()
-                else:
-                    window.show()
-
-                #########################################################################
             else:
                 form.lcdNumber.display(None)
                 form.lcdNumber_2.display(None)
+
+                # запускаем функцию сравнения значений селектора и базы. Управляем окном.
+                ########################################################################
+            url = drills_db
+            myobj = {"markerID": form.lineEdit.text()}
+            x = requests.get(url, myobj)
+            try:
+                drill1_sql = int(x.json().get("Сверло1", None))
+            except:
+                drill1_sql = 0
+
+            try:
+                drill2_sql = int(x.json().get("Сверло2", None))
+            except:
+                drill2_sql = 0
+
+            try:
+                drill_id = x.json().get("id", None)
+            except:
+                drill_id = 0
+
+            drill1_window = form.lcdNumber.intValue()
+            drill2_window = form.lcdNumber_2.intValue()
+
+            if form.lineEdit.text() != "" and drill_id != 0:
+                if drill1_sql == drill1_window and drill2_sql == drill2_window:
+                    window.hide()
+                else:
+                    window.show()
+            else:
+                window.show()
+
+                #########################################################################
 
     # подключаем файл, полученный в QtDesigner
     Form, Window = uic.loadUiType("interface.ui")
