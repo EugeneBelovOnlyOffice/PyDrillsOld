@@ -16,7 +16,6 @@ from tkinter import *
 from tkinter import font
 import yaml
 from bleak_winrt import _winrt
-from natsclient import *
 
 
 _winrt.uninit_apartment()  # Убираем ошибку при запуске (https://github.com/hbldh/bleak/issues/423)
@@ -252,7 +251,7 @@ async def main():
             global dfglobal
 
             if len(dfglobal) == len(df1):
-                pass  # "Количество строк в логе совпадает"
+                pass  # "количество строк в логе совпадает"
 
             else:
                 # если произошла запись в логи, то будет выполняться эта часть. Сюда нужно вставить http post в БД Bullmer
@@ -321,12 +320,12 @@ async def main():
 
                 print(requests.post(blogs_db, json=data, timeout=2.50))
                 print(data)
+
         except:
             print("ошибка обработки логов")
 
     # эта функция срабатывает при нажатии кнопки "Очистить"
     def btn_clk():
-        form.lineEdit.setText("")
         form.lcdNumber_3.display(None)
         form.lcdNumber_4.display(None)
 
