@@ -16,6 +16,7 @@ from tkinter import *
 from tkinter import font
 import yaml
 from bleak_winrt import _winrt
+from natsclient import *
 
 
 _winrt.uninit_apartment()  # Убираем ошибку при запуске (https://github.com/hbldh/bleak/issues/423)
@@ -229,7 +230,7 @@ async def main():
             latest_file = max(list_of_files, key=os.path.getctime)
             # print(latest_file)
 
-            # создаем датафрейм и выводим его в консоль
+            # создаем датафрейм
             columns = [
                 0,
                 17,
@@ -250,8 +251,8 @@ async def main():
             df1.drop(index=df1.index[-1], axis=0, inplace=True)
             global dfglobal
 
-            if dfglobal.equals(df1):
-                pass  # "Файл совпадает"
+            if len(dfglobal) == len(df1):
+                pass  # "Количество строк в логе совпадает"
 
             else:
                 # если произошла запись в логи, то будет выполняться эта часть. Сюда нужно вставить http post в БД Bullmer
