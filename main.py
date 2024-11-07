@@ -326,12 +326,13 @@ async def main():
 
     # эта функция срабатывает при нажатии кнопки "Очистить"
     def btn_clk():
+        form.lineEdit.setText("")
         form.lcdNumber_3.display(None)
         form.lcdNumber_4.display(None)
 
     # эта функция срабатывает при нажатии кнопки "Очистить" пароль супервайзера
     def btn_clk_sv():
-        form.lineEdit_2.clear()
+        form.lineEdit_2.setText("")
 
     # эта функция срабатывает при изменении текста в поле id раскладки
     def ln_changed():
