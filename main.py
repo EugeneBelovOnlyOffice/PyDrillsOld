@@ -318,7 +318,7 @@ async def main():
                     }
                 }
 
-                print(requests.post(blogs_db, json=data, timeout=2.50))
+                print(requests.post(blogs_db, json=data, timeout=None))
                 print(data)
 
         except:
