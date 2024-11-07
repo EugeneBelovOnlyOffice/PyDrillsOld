@@ -495,6 +495,12 @@ async def main():
             if form.lineEdit.text() != "" and drill_id != 0:
                 if drill1_sql == drill1_window and drill2_sql == drill2_window:
                     window.hide()
+                elif (  # в базе сверло номер 2, а первое сверло пустое. Тогда нам нужно искать вынутое сверло в 1 и второй рамке
+                    drill1_sql == 0
+                    and drill2_sql != 0
+                    and ((drill2_sql == drill1_window) or drill2_sql == drill1_window)
+                ):
+                    window.hide()
                 else:
                     window.show()
             else:
