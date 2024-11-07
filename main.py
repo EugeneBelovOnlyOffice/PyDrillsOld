@@ -498,7 +498,10 @@ async def main():
                 elif (  # в базе сверло номер 2, а первое сверло пустое. Тогда нам нужно искать вынутое сверло в 1 и второй рамке
                     drill1_sql == 0
                     and drill2_sql != 0
-                    and ((drill2_sql == drill1_window) or drill2_sql == drill1_window)
+                    and (
+                        (drill2_sql == drill1_window and drill2_window == 0)
+                        or (drill2_sql == drill2_window and drill1_window == 0)
+                    )
                 ):
                     window.hide()
                 else:
