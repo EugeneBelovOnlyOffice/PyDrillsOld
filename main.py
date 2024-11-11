@@ -504,6 +504,12 @@ async def main():
                     )
                 ):
                     window.hide()
+                elif (
+                    drill1_sql == drill2_sql
+                    and drill2_window == 0
+                    and drill1_window == drill2_sql
+                ):  # сверла в базе одинаковые
+                    window.hide()
                 else:
                     window.show()
             else:
