@@ -97,7 +97,7 @@ except IndexError:
     list_of_files = glob.glob(bullmer_log_folder_filter)
     latest_file = max(list_of_files, key=os.path.getctime)
 
-    # создаем датафрейм и выводим его в консоль
+    # создаем датафрейм
     columns = [
         0,
         17,
@@ -251,33 +251,17 @@ async def main():
             global dfglobal
 
             if len(dfglobal) == len(df1):
-                pass  # "количество строк в логе совпадает"
+                print("Файл совпадает. Записываем в SQL")
+                list = []  # список обьектов для отправки на сервер
+                # data = {"data": {"cutter": bullmer_db_log_name, "payload": [list]}}
 
-            else:
-                # если произошла запись в логи, то будет выполняться эта часть. Сюда нужно вставить http post в БД Bullmer
-                print(dfglobal)
-                dfglobal = df1.copy()
-                print(df1)
+                for i in range(0, len(df1)):
+                    DStart = dfglobal.loc[i, "Start    .1"].rstrip().replace(".", "-")
+                    DEnde = dfglobal.loc[i, "Ende     .1"].rstrip().replace(".", "-")
 
-                btn_clk()  # очищаем окно ввода
-                print("Файл не совпадает. Записываем в SQL")
-
-                DStart = (
-                    dfglobal.loc[len(dfglobal) - 1, "Start    .1"]
-                    .rstrip()
-                    .replace(".", "-")
-                )
-                DEnde = (
-                    dfglobal.loc[len(dfglobal) - 1, "Ende     .1"]
-                    .rstrip()
-                    .replace(".", "-")
-                )
-
-                # этот запрос отправляет данные на сервер. пишет статистику Булмер в базу
-                data = {
-                    "data": {
-                        "cutter": bullmer_db_log_name,  # number
-                        "Bild": dfglobal.loc[len(dfglobal) - 1, "Bild                "]
+                    # этот запрос отправляет данные на сервер. пишет статистику Булмер в базу
+                    data = {
+                        "Bild": dfglobal.loc[i, "Bild                "]
                         .lstrip()
                         .rstrip(),  # string
                         ############################## конвертируем дату в формат SQL
@@ -286,43 +270,45 @@ async def main():
                         ).strftime("%Y-%m-%d")
                         ############################## конвертируем дату в формат SQL
                         + " "
-                        + dfglobal.loc[
-                            len(dfglobal) - 1, "Start    "
-                        ].rstrip(),  # string
+                        + dfglobal.loc[i, "Start    "].rstrip(),  # string
                         ############################## конвертируем дату в формат SQL
                         "DEnde": datetime.datetime.strptime(DEnde, "%d-%m-%y").strftime(
                             "%Y-%m-%d"
                         )
                         ############################## конвертируем дату в формат SQL
                         + " "
-                        + dfglobal.loc[
-                            len(dfglobal) - 1, "Ende     "
-                        ].rstrip(),  # string
-                        "JOB": dfglobal.loc[len(dfglobal) - 1, "JOB[min]"]
+                        + dfglobal.loc[i, "Ende     "].rstrip(),  # string
+                        "JOB": dfglobal.loc[i, "JOB[min]"]
                         .lstrip()
                         .replace(",", "."),  # number
-                        "CUT": dfglobal.loc[len(dfglobal) - 1, "CUT[min]"]
+                        "CUT": dfglobal.loc[i, "CUT[min]"]
                         .lstrip()
                         .replace(",", "."),  # number
-                        "Bite": dfglobal.loc[len(dfglobal) - 1, "Bite[min]"]
+                        "Bite": dfglobal.loc[i, "Bite[min]"]
                         .lstrip()
                         .replace(",", "."),  # number
-                        "Neben": str(
-                            dfglobal.loc[len(dfglobal) - 1, "Neben[min]"]
-                        ).lstrip(),  # number
+                        "Neben": str(dfglobal.loc[i, "Neben[min]"]).lstrip(),  # number
                         "idRask": sqlite_get(
                             bullmer_sqlite_db
                         ),  # string, данные в SQLite
                         "Drills": None,  # number
                         "Hdrills": None,  # number
                     }
+                    list.append(data)
+                    # print(requests.post(blogs_db, json=data, timeout=None))
+
+                addtosqldata = {
+                    "data": {"cutter": bullmer_db_log_name, "payload": list}
                 }
+                print(requests.post(blogs_db, json=addtosqldata, timeout=None))
 
-                print(requests.post(blogs_db, json=data, timeout=None))
-                print(data)
+            else:
+                # если произошла запись в логи, то будет выполняться эта часть.
+                btn_clk()  # очищаем окно ввода
+                print("Файл не совпадает. Очищаем окно ввода")
 
-        except:
-            print("ошибка обработки логов")
+        except Exception as err:
+            print(err)
 
     # эта функция срабатывает при нажатии кнопки "Очистить"
     def btn_clk():

@@ -1,4 +1,4 @@
-('C:\\PythonProjects\\drills\\build\\main\\PYZ-00.pyz',
+('C:\\PythonProjects\\Drills\\build\\main\\PYZ-00.pyz',
  [('PyQt5',
    'c:\\pythonprojects\\drills\\venv\\lib\\site-packages\\PyQt5\\__init__.py',
    'PYMODULE'),
