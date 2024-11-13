@@ -253,7 +253,6 @@ async def main():
             if len(dfglobal) == len(df1):
                 print("Файл совпадает. Записываем в SQL")
                 list = []  # список обьектов для отправки на сервер
-                # data = {"data": {"cutter": bullmer_db_log_name, "payload": [list]}}
 
                 for i in range(0, len(df1)):
                     DStart = dfglobal.loc[i, "Start    .1"].rstrip().replace(".", "-")
@@ -295,15 +294,13 @@ async def main():
                         "Hdrills": None,  # number
                     }
                     list.append(data)
-                    # print(requests.post(blogs_db, json=data, timeout=None))
-
                 addtosqldata = {
                     "data": {"cutter": bullmer_db_log_name, "payload": list}
                 }
                 print(requests.post(blogs_db, json=addtosqldata, timeout=None))
-
             else:
                 # если произошла запись в логи, то будет выполняться эта часть.
+                dfglobal.copy(df1)
                 btn_clk()  # очищаем окно ввода
                 print("Файл не совпадает. Очищаем окно ввода")
 
