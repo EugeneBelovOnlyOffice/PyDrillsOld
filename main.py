@@ -300,7 +300,7 @@ async def main():
                 print(requests.post(blogs_db, json=addtosqldata, timeout=None))
             else:
                 # если произошла запись в логи, то будет выполняться эта часть.
-                dfglobal.copy(df1)
+                dfglobal = df1.copy()
                 btn_clk()  # очищаем окно ввода
                 print("Файл не совпадает. Очищаем окно ввода")
 
