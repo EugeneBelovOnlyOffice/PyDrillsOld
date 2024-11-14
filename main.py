@@ -15,6 +15,7 @@ import warnings
 from tkinter import *
 from tkinter import font
 import yaml
+import pyautogui
 from bleak_winrt import _winrt
 
 
@@ -42,6 +43,9 @@ drills_db = Bullmer["Bullmer"]["drills_db"]
 
 # инициализация точки входа отправки изменений в логе(статистики) в бд
 blogs_db = Bullmer["Bullmer"]["blogs_db"]
+
+# инициализация точки входа отправки изменений в логе(статистики) в бд. Отправка всего файла
+blog_db_batch = Bullmer["Bullmer"]["blog_db_batch"]
 
 # инициализация точки входа отправки текущей и предидущей раскладок в базу экрана раскроя
 current_db = Bullmer["Bullmer"]["current_db"]
@@ -116,6 +120,14 @@ except IndexError:
 
     dfglobal = pd.read_csv(latest_file, sep=";", usecols=columns)
 
+    ##############################################################################################
+    # здесь мы ищем наиболее подходящее окно по названию
+    handle = pywinauto.findwindows.find_window(best_match=nextgen_name)
+
+    app = pywinauto.application.Application(backend="uia").connect(
+        handle=handle, timeout=100
+    )
+
 
 ##############################################################################################
 
@@ -129,7 +141,6 @@ def nextgen_clicker():
         app = pywinauto.application.Application(backend="uia").connect(
             handle=handle, timeout=100
         )
-
         # кликаем по кнопке редактора
         app.Dialog.child_window(
             title="qt_top_dock", control_type="Pane"
@@ -159,11 +170,6 @@ def nextgen_clicker():
         top.mainloop()
 
 
-# функция, строит массив из сверел (два элемента). Сверла, вынутые с селектора
-def get_indices(element, lst):
-    return [i for i in range(len(lst)) if lst[i] == element]
-
-
 # функция, сравнивает показания селектра и базы
 def comparison(lcd1, lcd2):
     if lcd1 == lcd2:
@@ -173,6 +179,10 @@ def comparison(lcd1, lcd2):
 
 
 async def main():
+    # функция, строит массив из сверел (два элемента). Сверла, вынутые с селектора
+    def get_indices(element, lst):
+        return [i for i in range(len(lst)) if lst[i] == element]
+
     # функция получает id последней раскладки из sqlite
     def sqlite_get(db):
         # Устанавливаем соединение с базой данных
@@ -290,14 +300,13 @@ async def main():
                         "idRask": sqlite_get(
                             bullmer_sqlite_db
                         ),  # string, данные в SQLite
-                        "Drills": None,  # number
-                        "Hdrills": None,  # number
                     }
                     list.append(data)
                 addtosqldata = {
                     "data": {"cutter": bullmer_db_log_name, "payload": list}
                 }
-                print(requests.post(blogs_db, json=addtosqldata, timeout=None))
+                print(addtosqldata)
+                print(requests.post(blog_db_batch, json=addtosqldata, timeout=None))
             else:
                 # если произошла запись в логи, то будет выполняться эта часть.
                 dfglobal = df1.copy()
@@ -357,8 +366,6 @@ async def main():
                 listbox1.grid(row=1, column=1, sticky=W, pady=2)
                 top.mainloop()
 
-            nextgen_clicker()  # запускаем редактор NextGen
-
             # записывает отсканированную раскладку в sqlite
             sqlite_post(form.lineEdit.text(), bullmer_sqlite_db)
 
@@ -379,8 +386,7 @@ async def main():
                 pass
             else:
                 print(requests.post(current_db, json=data, timeout=2.50))
-                print(data)
-
+            nextgen_clicker()  # запускаем редактор NextGen
         except:
             form.lcdNumber_3.display(None)
             form.lcdNumber_4.display(None)
@@ -439,18 +445,19 @@ async def main():
             if len(indices) == 1:  # если вытащили одно сверло
                 form.lcdNumber.display(drills[indices[0]])
                 form.lcdNumber_2.display(None)
+                drill1 = drills[indices[0]]
+                drill2 = 0
 
             elif len(indices) == 2:
-                # если вытащили два сверла
-                if form.lcdNumber.intValue() == int(drills[indices[1]]):
-                    form.lcdNumber.display(drills[indices[1]])
-                    form.lcdNumber_2.display(drills[indices[0]])
-                elif form.lcdNumber.intValue() == int(drills[indices[0]]):
-                    form.lcdNumber.display(drills[indices[0]])
-                    form.lcdNumber_2.display(drills[indices[1]])
-            else:  # если вытащили больше двух
+                form.lcdNumber.display(drills[indices[0]])
+                form.lcdNumber_2.display(drills[indices[1]])
+                drill1 = drills[indices[0]]
+                drill2 = drills[indices[1]]
+            else:
                 form.lcdNumber.display(None)
                 form.lcdNumber_2.display(None)
+                drill1 = 0
+                drill2 = 0
 
                 # запускаем функцию сравнения значений селектора и базы. Управляем окном.
                 ########################################################################
@@ -472,26 +479,23 @@ async def main():
             except:
                 drill_id = 0
 
-            drill1_window = form.lcdNumber.intValue()
-            drill2_window = form.lcdNumber_2.intValue()
+            list1 = [
+                int(drill1),
+                int(drill2),
+            ]  # список для сравнения сверл селектора и сверл базы
+            list2 = [
+                int(drill1_sql),
+                int(drill2_sql),
+            ]  # список для сравнения сверл селектора и сверл базы
+            list1.sort()
+            list2.sort()
 
             if form.lineEdit.text() != "" and drill_id != 0:
-                if drill1_sql == drill1_window and drill2_sql == drill2_window:
+                if list1 == list2:  # сверла селектора совпадают с базой
                     window.hide()
-                elif (  # в базе сверло номер 2, а первое сверло пустое. Тогда нам нужно искать вынутое сверло в 1 и второй рамке
-                    drill1_sql == 0
-                    and drill2_sql != 0
-                    and (
-                        (drill2_sql == drill1_window and drill2_window == 0)
-                        or (drill2_sql == drill2_window and drill1_window == 0)
-                    )
-                ):
-                    window.hide()
-                elif (
-                    drill1_sql == drill2_sql
-                    and drill2_window == 0
-                    and drill1_window == drill2_sql
-                ):  # сверла в базе одинаковые
+                elif (list2[0] == list2[1]) and list2[0] == list1[
+                    1
+                ]:  # сверла базы одинаковые
                     window.hide()
                 else:
                     window.show()

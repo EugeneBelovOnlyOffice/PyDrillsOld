@@ -16,10 +16,12 @@ Bullmer:
   current_db : "http://10.55.128.67:5000/cutting/currentBullmerLog"
 
   
-  nextgen_name : "NextGeneration R7.8.1, 28.05.2018" 
+  nextgen_name : "NextGeneration R7.8.1, 28.05.2018"
 
   
   supervisor_pass : "bucut"
 
   
   serial_port : "COM6"
+
+  blog_db_batch : "http://10.55.128.67:5000/cutting/bullmerStatBatch"
