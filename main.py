@@ -231,13 +231,85 @@ async def main():
             connection.commit()
         connection.close()
 
-    # функция, которая проверяет лог и стирает id раскладки из главного окна (тем самым делает его не скрытым)
+    # функция, которая проверяет лог и отсылает данные в SQL
     def logchk():
         try:
             # возвращаем самый ранний файл csv в каталоге логов
             list_of_files = glob.glob(bullmer_log_folder_filter)
             latest_file = max(list_of_files, key=os.path.getctime)
-            # print(latest_file)
+
+            # создаем датафрейм
+            columns = [
+                0,
+                17,
+                18,
+                20,
+                21,
+                10,
+                11,
+                14,
+                15,
+                37,
+                45,
+                46,
+                2,
+            ]
+
+            df1 = pd.read_csv(latest_file, sep=";", usecols=columns)
+            df1.drop(index=df1.index[-1], axis=0, inplace=True)
+            global dfglobal
+
+            list = []  # список обьектов для отправки на сервер
+
+            for i in range(0, len(df1)):
+                DStart = dfglobal.loc[i, "Start    .1"].rstrip().replace(".", "-")
+                DEnde = dfglobal.loc[i, "Ende     .1"].rstrip().replace(".", "-")
+
+                # этот запрос отправляет данные на сервер. пишет статистику Булмер в базу
+                data = {
+                    "Bild": dfglobal.loc[i, "Bild                "]
+                    .lstrip()
+                    .rstrip(),  # string
+                    ############################## конвертируем дату в формат SQL
+                    "DStart": datetime.datetime.strptime(DStart, "%d-%m-%y").strftime(
+                        "%Y-%m-%d"
+                    )
+                    ############################## конвертируем дату в формат SQL
+                    + " "
+                    + dfglobal.loc[i, "Start    "].rstrip(),  # string
+                    ############################## конвертируем дату в формат SQL
+                    "DEnde": datetime.datetime.strptime(DEnde, "%d-%m-%y").strftime(
+                        "%Y-%m-%d"
+                    )
+                    ############################## конвертируем дату в формат SQL
+                    + " "
+                    + dfglobal.loc[i, "Ende     "].rstrip(),  # string
+                    "JOB": dfglobal.loc[i, "JOB[min]"]
+                    .lstrip()
+                    .replace(",", "."),  # number
+                    "CUT": dfglobal.loc[i, "CUT[min]"]
+                    .lstrip()
+                    .replace(",", "."),  # number
+                    "Bite": dfglobal.loc[i, "Bite[min]"]
+                    .lstrip()
+                    .replace(",", "."),  # number
+                    "Neben": str(dfglobal.loc[i, "Neben[min]"]).lstrip(),  # number
+                    "idRask": "0",  # sqlite_get(bullmer_sqlite_db),  # string, данные в SQLite
+                }
+                list.append(data)
+            addtosqldata = {"data": {"cutter": bullmer_db_log_name, "payload": list}}
+            print("sent log to SQL")
+            print(requests.post(blog_db_batch, json=addtosqldata, timeout=None))
+
+        except Exception as err:
+            print(err)
+
+    # функция, которая проверяет лог и стирает id раскладки из главного окна (тем самым делает его не скрытым)
+    def logcheck_clear_id():
+        try:
+            # возвращаем самый ранний файл csv в каталоге логов
+            list_of_files = glob.glob(bullmer_log_folder_filter)
+            latest_file = max(list_of_files, key=os.path.getctime)
 
             # создаем датафрейм
             columns = [
@@ -261,52 +333,8 @@ async def main():
             global dfglobal
 
             if len(dfglobal) == len(df1):
-                print("Файл совпадает. Записываем в SQL")
-                list = []  # список обьектов для отправки на сервер
-
-                for i in range(0, len(df1)):
-                    DStart = dfglobal.loc[i, "Start    .1"].rstrip().replace(".", "-")
-                    DEnde = dfglobal.loc[i, "Ende     .1"].rstrip().replace(".", "-")
-
-                    # этот запрос отправляет данные на сервер. пишет статистику Булмер в базу
-                    data = {
-                        "Bild": dfglobal.loc[i, "Bild                "]
-                        .lstrip()
-                        .rstrip(),  # string
-                        ############################## конвертируем дату в формат SQL
-                        "DStart": datetime.datetime.strptime(
-                            DStart, "%d-%m-%y"
-                        ).strftime("%Y-%m-%d")
-                        ############################## конвертируем дату в формат SQL
-                        + " "
-                        + dfglobal.loc[i, "Start    "].rstrip(),  # string
-                        ############################## конвертируем дату в формат SQL
-                        "DEnde": datetime.datetime.strptime(DEnde, "%d-%m-%y").strftime(
-                            "%Y-%m-%d"
-                        )
-                        ############################## конвертируем дату в формат SQL
-                        + " "
-                        + dfglobal.loc[i, "Ende     "].rstrip(),  # string
-                        "JOB": dfglobal.loc[i, "JOB[min]"]
-                        .lstrip()
-                        .replace(",", "."),  # number
-                        "CUT": dfglobal.loc[i, "CUT[min]"]
-                        .lstrip()
-                        .replace(",", "."),  # number
-                        "Bite": dfglobal.loc[i, "Bite[min]"]
-                        .lstrip()
-                        .replace(",", "."),  # number
-                        "Neben": str(dfglobal.loc[i, "Neben[min]"]).lstrip(),  # number
-                        "idRask": sqlite_get(
-                            bullmer_sqlite_db
-                        ),  # string, данные в SQLite
-                    }
-                    list.append(data)
-                addtosqldata = {
-                    "data": {"cutter": bullmer_db_log_name, "payload": list}
-                }
-                print(addtosqldata)
-                print(requests.post(blog_db_batch, json=addtosqldata, timeout=None))
+                # файл лога не изменился. ничего не делаем
+                pass
             else:
                 # если произошла запись в логи, то будет выполняться эта часть.
                 dfglobal = df1.copy()
@@ -336,8 +364,6 @@ async def main():
 
             form.lcdNumber_3.display(x.json().get("Сверло1", None))
             form.lcdNumber_4.display(x.json().get("Сверло2", None))
-            print(x.json().get("Сверло1", None))
-            print(x.json().get("Сверло2", None))
 
             # проверяем, сканировали ли мы эту раскладку ранее (проверяем последнюю запись в SQLite). Если да, выводим worning
             if sqlite_get(bullmer_sqlite_db) == form.lineEdit.text():
@@ -385,6 +411,7 @@ async def main():
             if form.lineEdit.text() == "":
                 pass
             else:
+                print("sent current to SQL current")
                 print(requests.post(current_db, json=data, timeout=2.50))
             nextgen_clicker()  # запускаем редактор NextGen
         except:
@@ -535,10 +562,14 @@ async def main():
     timer1.timeout.connect(read_serial_arduino)  # connect it to your update function
     timer1.start(1000)  # set it to timeout in 5000 ms
 
-    # проверка логов
     timer2 = QtCore.QTimer()  # set up your QTimer
     timer2.timeout.connect(logchk)  # connect it to your update function
-    timer2.start(5000)  # set it to timeout in 5000 ms
+    timer2.start(60_000)  # set it to timeout in 60_000 ms
+
+    # проверка логов для стирания записи раскладки
+    timer3 = QtCore.QTimer()  # set up your QTimer
+    timer3.timeout.connect(logcheck_clear_id)  # connect it to your update function
+    timer3.start(5000)  # set it to timeout in 5000 ms
 
     # запускаем окно программы
     app.exec()
