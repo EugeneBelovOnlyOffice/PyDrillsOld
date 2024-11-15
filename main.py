@@ -120,17 +120,6 @@ except IndexError:
 
     dfglobal = pd.read_csv(latest_file, sep=";", usecols=columns)
 
-    ##############################################################################################
-    # здесь мы ищем наиболее подходящее окно по названию
-    handle = pywinauto.findwindows.find_window(best_match=nextgen_name)
-
-    app = pywinauto.application.Application(backend="uia").connect(
-        handle=handle, timeout=100
-    )
-
-
-##############################################################################################
-
 
 # эта функция кликает по кнопке в nextgen
 def nextgen_clicker():
