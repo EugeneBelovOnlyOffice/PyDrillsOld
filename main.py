@@ -85,9 +85,6 @@ try:
         11,
         14,
         15,
-        37,
-        45,
-        46,
         2,
     ]
 
@@ -111,9 +108,6 @@ except IndexError:
         11,
         14,
         15,
-        37,
-        45,
-        46,
         2,
     ]
 
@@ -122,6 +116,7 @@ except IndexError:
 
 # эта функция кликает по кнопке в nextgen
 def nextgen_clicker():
+    pywinauto.timings.Timings.fast()  # устанавливаем глобально быстрые тайминги для  pywinauto
     try:
         # здесь мы ищем наиболее подходящее окно по названию
         handle = pywinauto.findwindows.find_window(best_match=nextgen_name)
@@ -237,9 +232,6 @@ async def main():
                 11,
                 14,
                 15,
-                37,
-                45,
-                46,
                 2,
             ]
 
@@ -310,9 +302,6 @@ async def main():
                 11,
                 14,
                 15,
-                37,
-                45,
-                46,
                 2,
             ]
 
