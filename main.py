@@ -15,7 +15,6 @@ import warnings
 from tkinter import *
 from tkinter import font
 import yaml
-import pyautogui
 from bleak_winrt import _winrt
 
 
@@ -336,6 +335,8 @@ async def main():
     # эта функция срабатывает при нажатии кнопки "Очистить"
     def btn_clk():
         form.lineEdit.setText("")
+        window.activateWindow()
+        form.lineEdit.setFocus()
         form.lcdNumber_3.display(None)
         form.lcdNumber_4.display(None)
 
