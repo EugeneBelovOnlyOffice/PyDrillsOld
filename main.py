@@ -163,7 +163,36 @@ def comparison(lcd1, lcd2):
         return 0
 
 
+# глобальные переменные хранят полученные из базы сверла при сканировании раскладки
+drill1_sql = 0
+drill2_sql = 0
+drill_id = 0
+
+
 async def main():
+    # функция получает сверла из базы для id раскладки и саму раскладку
+    def sql_drills_get():
+        url = drills_db
+        myobj = {"markerID": form.lineEdit.text()}
+        x = requests.get(url, myobj)
+        try:
+            global drill1_sql
+            drill1_sql = int(x.json().get("Сверло1", None))
+        except:
+            drill1_sql = 0
+
+        try:
+            global drill2_sql
+            drill2_sql = int(x.json().get("Сверло2", None))
+        except:
+            drill2_sql = 0
+
+        try:
+            global drill_id
+            drill_id = x.json().get("id", None)
+        except:
+            drill_id = 0
+
     # функция, строит массив из сверел (два элемента). Сверла, вынутые с селектора
     def get_indices(element, lst):
         return [i for i in range(len(lst)) if lst[i] == element]
@@ -338,6 +367,7 @@ async def main():
     # эта функция срабатывает при изменении текста в поле id раскладки
     def ln_changed():
         nextgen_clicker()  # запускаем редактор NextGen
+        sql_drills_get()  # эта функция присваивает значения глобальным переменным сверл базы, для управления окном функцией read_serial_arduino()
         url = drills_db
         myobj = {"markerID": form.lineEdit.text()}
         try:
@@ -470,23 +500,6 @@ async def main():
 
                 # запускаем функцию сравнения значений селектора и базы. Управляем окном.
                 ########################################################################
-            url = drills_db
-            myobj = {"markerID": form.lineEdit.text()}
-            x = requests.get(url, myobj)
-            try:
-                drill1_sql = int(x.json().get("Сверло1", None))
-            except:
-                drill1_sql = 0
-
-            try:
-                drill2_sql = int(x.json().get("Сверло2", None))
-            except:
-                drill2_sql = 0
-
-            try:
-                drill_id = x.json().get("id", None)
-            except:
-                drill_id = 0
 
             list1 = [
                 int(drill1),
