@@ -337,6 +337,7 @@ async def main():
 
     # эта функция срабатывает при изменении текста в поле id раскладки
     def ln_changed():
+        nextgen_clicker()  # запускаем редактор NextGen
         url = drills_db
         myobj = {"markerID": form.lineEdit.text()}
         try:
@@ -394,7 +395,7 @@ async def main():
             else:
                 print("sent current to SQL current")
                 print(requests.post(current_db, json=data, timeout=2.50))
-            nextgen_clicker()  # запускаем редактор NextGen
+
         except:
             form.lcdNumber_3.display(None)
             form.lcdNumber_4.display(None)
