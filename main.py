@@ -16,6 +16,7 @@ from tkinter import *
 from tkinter import font
 import yaml
 from bleak_winrt import _winrt
+import pyautogui
 
 
 _winrt.uninit_apartment()  # Убираем ошибку при запуске (https://github.com/hbldh/bleak/issues/423)
@@ -122,12 +123,13 @@ def nextgen_clicker():
         handle = pywinauto.findwindows.find_window(best_match=nextgen_name)
 
         app = pywinauto.application.Application(backend="uia").connect(
-            handle=handle, timeout=100
+            handle=handle, timeout=1
         )
         # кликаем по кнопке редактора
         app.Dialog.child_window(
-            title="qt_top_dock", control_type="Pane"
-        ).СписокзаданийPane.СписокзаданийPane2.itsQueueEditPane.click_input()
+            best_match="itsQueueEditPane", control_type="Pane"
+        ).click_input()
+
     except:
         print("Запустите NextGen")
         top = Tk()
