@@ -152,6 +152,7 @@ def nextgen_clicker():
         )
         listbox1.insert(1, "Запустите NextGen")
         listbox1.grid(row=1, column=1, sticky=W, pady=2)
+        top.attributes("-topmost", True)
         top.mainloop()
 
 
@@ -402,6 +403,7 @@ async def main():
                 listbox1.insert(1, "Уже сканировали")
                 listbox1.insert(2, sqlite_get_time(bullmer_sqlite_db))
                 listbox1.grid(row=1, column=1, sticky=W, pady=2)
+                top.attributes("-topmost", True)
                 top.mainloop()
 
             # записывает отсканированную раскладку в sqlite
