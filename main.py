@@ -379,10 +379,8 @@ async def main():
             ]  # id раскладки предыдущее
             await asyncio.sleep(3)
             await nc.publish(
-                "cutter" + bullmer_db_log_name, bytes(curent_id, encoding="utf-8")
-            )
-            await nc.publish(
-                "cutter" + bullmer_db_log_name, bytes(past_id, encoding="utf-8")
+                "cutter" + bullmer_db_log_name,
+                bytes(curent_id + "," + past_id, encoding="utf-8"),
             )
 
     # эта функция срабатывает при нажатии кнопки "Очистить" пароль супервайзера
