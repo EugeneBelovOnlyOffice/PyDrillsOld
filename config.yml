@@ -25,3 +25,5 @@ Bullmer:
   serial_port : "COM6"
 
   blog_db_batch : "http://10.55.128.67:5000/cutting/bullmerStatBatch"
+
+  nats_ip : "nats://10.55.128.67:4222"

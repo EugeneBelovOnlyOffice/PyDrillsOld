@@ -17,6 +17,9 @@ from tkinter import font
 import yaml
 from bleak_winrt import _winrt
 import pyautogui
+import nats
+from nats.errors import ConnectionClosedError, TimeoutError, NoServersError
+from threading import Thread
 
 
 _winrt.uninit_apartment()  # Убираем ошибку при запуске (https://github.com/hbldh/bleak/issues/423)
@@ -59,6 +62,9 @@ supervisor_pass = Bullmer["Bullmer"]["supervisor_pass"]
 
 # номер Serial порта
 serial_port = Bullmer["Bullmer"]["serial_port"]
+
+# подключение к nats
+nats_ip = Bullmer["Bullmer"]["nats_ip"]
 
 #############################################################################################
 # иницилизация порта Ардуино
@@ -361,6 +367,24 @@ async def main():
         form.lcdNumber_3.display(None)
         form.lcdNumber_4.display(None)
 
+    # эта функция отправки текущей и предыдущей раскладки в nats
+    async def send_nats():
+        nc = await nats.connect(nats_ip)
+        while True:
+            curent_id = str(sqlite_get_last_two_records(bullmer_sqlite_db)[0])[:-2][
+                1:
+            ]  # id раскладки текуще
+            past_id = str(sqlite_get_last_two_records(bullmer_sqlite_db)[1])[:-2][
+                1:
+            ]  # id раскладки предыдущее
+            await asyncio.sleep(3)
+            await nc.publish(
+                "cutter" + bullmer_db_log_name, bytes(curent_id, encoding="utf-8")
+            )
+            await nc.publish(
+                "cutter" + bullmer_db_log_name, bytes(past_id, encoding="utf-8")
+            )
+
     # эта функция срабатывает при нажатии кнопки "Очистить" пароль супервайзера
     def btn_clk_sv():
         form.lineEdit_2.setText("")
@@ -373,8 +397,8 @@ async def main():
         myobj = {"markerID": form.lineEdit.text()}
         try:
             x = requests.get(url, myobj)
-            # выводим ответ
 
+            # выводим ответ
             form.lcdNumber_3.display(x.json().get("Сверло1", None))
             form.lcdNumber_4.display(x.json().get("Сверло2", None))
 
@@ -428,7 +452,8 @@ async def main():
                 print("sent current to SQL current")
                 print(requests.post(current_db, json=data, timeout=2.50))
 
-        except:
+        except Exception as ex:
+            print(ex)
             form.lcdNumber_3.display(None)
             form.lcdNumber_4.display(None)
 
@@ -436,13 +461,11 @@ async def main():
     def ln_changed_sv():
         if form.lineEdit_2.text() == supervisor_pass:
             window.setWindowFlag(QtCore.Qt.WindowStaysOnTopHint, False)
-            form.lineEdit_2.setStyleSheet(
-                "QLineEdit" "{" "background : lightgreen;" "}"
-            )
+            form.lineEdit_2.setStyleSheet("QLineEdit{background : lightgreen;}")
 
         else:
             window.setWindowFlag(QtCore.Qt.WindowStaysOnTopHint, True)
-            form.lineEdit_2.setStyleSheet("QLineEdit" "{" "background : white;" "}")
+            form.lineEdit_2.setStyleSheet("QLineEdit{background : white;}")
 
     # эта функция получает строку с ардуино и вносит значения в интерфейс
     def read_serial_arduino():
@@ -559,6 +582,7 @@ async def main():
     timer1.timeout.connect(read_serial_arduino)  # connect it to your update function
     timer1.start(1000)  # set it to timeout in 5000 ms
 
+    # запуск функции, которая проверяет лог и отсылает данные в SQL
     timer2 = QtCore.QTimer()  # set up your QTimer
     timer2.timeout.connect(logchk)  # connect it to your update function
     timer2.start(60_000)  # set it to timeout in 60_000 ms
@@ -567,6 +591,10 @@ async def main():
     timer3 = QtCore.QTimer()  # set up your QTimer
     timer3.timeout.connect(logcheck_clear_id)  # connect it to your update function
     timer3.start(5000)  # set it to timeout in 5000 ms
+
+    # запускает функцию send_nats() отправки текущей и предыдущей раскладки в nats
+    _thread = Thread(target=asyncio.run, args=(send_nats(),))
+    _thread.start()
 
     # запускаем окно программы
     app.exec()
