@@ -20,7 +20,9 @@ import pyautogui
 import nats
 from nats.errors import ConnectionClosedError, TimeoutError, NoServersError
 from threading import Thread
+import scanner
 
+scanner.print_hi()
 
 _winrt.uninit_apartment()  # Убираем ошибку при запуске (https://github.com/hbldh/bleak/issues/423)
 
