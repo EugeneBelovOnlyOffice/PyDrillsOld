@@ -67,6 +67,9 @@ serial_port = Bullmer["Bullmer"]["serial_port"]
 # подключение к nats
 nats_ip = Bullmer["Bullmer"]["nats_ip"]
 
+# строка сверл, котрые мы отключили для отслеживания. 0 - датчик отслеживается, 1 - датчик выключен программно
+drills_off = Bullmer["Bullmer"]["drills_off"]
+
 #############################################################################################
 # иницилизация порта Ардуино
 ser = serial.Serial()
@@ -501,8 +504,15 @@ async def main():
                 "26",
             ]  # массив обозначений сверел селектора
 
-            for symbol in arduinostring:
-                symbols += symbol
+            for index, symbol in enumerate(arduinostring):
+                # здесь пишем логику наложения маски отключенных сверл на строку показаний с датчиком
+
+                if drills_off[index] == "0":
+                    symbols += symbol
+                else:
+                    symbols += "0"
+
+            print(symbols)
             indices = get_indices("1", symbols)
 
             if len(indices) == 1:  # если вытащили одно сверло
