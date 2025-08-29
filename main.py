@@ -22,6 +22,7 @@ from nats.errors import ConnectionClosedError, TimeoutError, NoServersError
 from threading import Thread
 import scanner
 import beep
+import json
 
 _winrt.uninit_apartment()  # Убираем ошибку при запуске (https://github.com/hbldh/bleak/issues/423)
 
@@ -386,6 +387,15 @@ async def main():
                 "cutter" + bullmer_db_log_name,
                 bytes(curent_id + "," + past_id, encoding="utf-8"),
             )
+            await nc.publish(
+                "bullmerLog",
+                json.dumps(
+                    {
+                        "event": "getPreviousMarker",
+                        "payload": {"markerID": past_id},
+                    }
+                ).encode(),
+            )
 
     # эта функция срабатывает при нажатии кнопки "Очистить" пароль супервайзера
     def btn_clk_sv():
@@ -512,7 +522,6 @@ async def main():
                 else:
                     symbols += "0"
 
-            print(symbols)
             indices = get_indices("1", symbols)
 
             if len(indices) == 1:  # если вытащили одно сверло
