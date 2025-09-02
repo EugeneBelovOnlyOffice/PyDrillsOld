@@ -387,12 +387,23 @@ async def main():
                 "cutter" + bullmer_db_log_name,
                 bytes(curent_id + "," + past_id, encoding="utf-8"),
             )
+            # публиувция для плавающего перестила
             await nc.publish(
                 "bullmerLog",
                 json.dumps(
                     {
-                        "event": "getPreviousMarker",
-                        "payload": {"markerID": past_id},
+                        "event": "getCurrentMarker",
+                        "payload": {"markerID": curent_id, "mode": "current"},
+                    }
+                ).encode(),
+            )
+            # публиувция для плавающего перестила
+            await nc.publish(
+                "bullmerLog",
+                json.dumps(
+                    {
+                        "event": "getCurrentMarker",
+                        "payload": {"markerID": past_id, "mode": "previous"},
                     }
                 ).encode(),
             )
