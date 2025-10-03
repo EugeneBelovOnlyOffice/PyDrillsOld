@@ -23,6 +23,10 @@ from threading import Thread
 import scanner
 import beep
 import json
+from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout
+from PyQt5.QtCore import Qt, QTimer
 
 _winrt.uninit_apartment()  # Убираем ошибку при запуске (https://github.com/hbldh/bleak/issues/423)
 
@@ -141,30 +145,9 @@ def nextgen_clicker():
             best_match="itsQueueEditPane", control_type="Pane"
         ).click_input()
 
-    except:
+    except Exception:
         print("Запустите NextGen")
-        top = Tk()
-        top.geometry("200x200+10+10")
-        top.title("NextGen")
-
-        # make font template
-        appHighlightFont = font.Font(family="Helvetica", size=15, weight="bold")
-        font.families()
-
-        # create listbox object
-        listbox1 = Listbox(
-            top,
-            height=8,
-            width=18,
-            bg="lightgrey",
-            activestyle="dotbox",
-            font=appHighlightFont,
-            fg="red",
-        )
-        listbox1.insert(1, "Запустите NextGen")
-        listbox1.grid(row=1, column=1, sticky=W, pady=2)
-        top.attributes("-topmost", True)
-        top.mainloop()
+        # worning_window("Запустите NextGen", "blue", 3000)
 
 
 # функция, сравнивает показания селектра и базы
@@ -175,13 +158,48 @@ def comparison(lcd1, lcd2):
         return 0
 
 
-# глобальные переменные хранят полученные из базы сверла при сканировании раскладки
+# глобальные переменные хранят полученные из базы сверла при сканировании раскладки. Раскладка хранится для управления окном селектора
 drill1_sql = 0
 drill2_sql = 0
 drill_id = 0
+marker_id = 0
 
 
 async def main():
+    # функция выводит сообщение, что раскладку уже сканировали
+    def worning_window(message, color, duration):
+        # Параметры окна
+        width, height = 500, 250
+        duration = 3000  # время в миллисекундах
+
+        # Создаём всплывающее окно без кнопок
+        warn = QWidget(window)
+        warn.setWindowFlags(
+            Qt.Window | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
+        )
+        warn.setStyleSheet(f"background-color: lightgrey; border: 3px solid {color};")
+
+        # Центрируем окно по экрану
+        screen_geometry = QApplication.primaryScreen().availableGeometry()
+        x = (screen_geometry.width() - width) // 2
+        y = (screen_geometry.height() - height) // 2
+        warn.setGeometry(x, y, width, height)
+
+        # Добавляем текст
+        layout = QVBoxLayout()
+        label = QLabel(message)
+        label.setAlignment(Qt.AlignCenter)
+        label.setStyleSheet(f"color: {color}; font-weight: bold; font-size: 24pt;")
+        layout.addWidget(label)
+        warn.setLayout(layout)
+
+        warn.show()
+        warn.raise_()
+        warn.activateWindow()
+
+        # Автоматическое закрытие через duration миллисекунд
+        QTimer.singleShot(duration, warn.close)
+
     # функция получает сверла из базы для id раскладки и саму раскладку
     def sql_drills_get():
         url = drills_db
@@ -366,6 +384,8 @@ async def main():
 
     # эта функция срабатывает при нажатии кнопки "Очистить"
     def btn_clk():
+        global marker_id
+        marker_id = 0
         form.lineEdit.setText("")
         window.activateWindow()
         form.lineEdit.setFocus()
@@ -414,71 +434,75 @@ async def main():
 
     # эта функция срабатывает при изменении текста в поле id раскладки
     def ln_changed():
-        nextgen_clicker()  # запускаем редактор NextGen
-        sql_drills_get()  # эта функция присваивает значения глобальным переменным сверл базы, для управления окном функцией read_serial_arduino()
-        url = drills_db
-        myobj = {"markerID": form.lineEdit.text()}
+        # проверяем, есть ли такая раскладка в БД
         try:
+            url = drills_db
+            myobj = {"markerID": form.lineEdit.text()}
             x = requests.get(url, myobj)
+            x.raise_for_status()  # выбросит исключение для 4xx и 5xx ошибок
+        except requests.exceptions.HTTPError as http_err:
+            if http_err.response is not None and http_err.response.status_code == 500:
+                print("Ошибка сервера 500: попробуйте позже")
+                btn_clk()
 
-            # выводим ответ
-            form.lcdNumber_3.display(x.json().get("Сверло1", None))
-            form.lcdNumber_4.display(x.json().get("Сверло2", None))
-
-            # проверяем, сканировали ли мы эту раскладку ранее (проверяем последнюю запись в SQLite). Если да, выводим worning
-            if sqlite_get(bullmer_sqlite_db) == form.lineEdit.text():
-                print("Уже сканировали " + sqlite_get_time(bullmer_sqlite_db))
-
-                top = Tk()
-                top.geometry("200x200+10+10")
-                top.title("SQLite")
-
-                # make font template
-                appHighlightFont = font.Font(family="Helvetica", size=15, weight="bold")
-                font.families()
-
-                # create listbox object
-                listbox1 = Listbox(
-                    top,
-                    height=8,
-                    width=18,
-                    bg="lightgrey",
-                    activestyle="dotbox",
-                    font=appHighlightFont,
-                    fg="red",
-                )
-                listbox1.insert(1, "Уже сканировали")
-                listbox1.insert(2, sqlite_get_time(bullmer_sqlite_db))
-                listbox1.grid(row=1, column=1, sticky=W, pady=2)
-                top.attributes("-topmost", True)
-                top.mainloop()
-
-            # записывает отсканированную раскладку в sqlite
-            sqlite_post(form.lineEdit.text(), bullmer_sqlite_db)
-
-            # записываем текущую и предыдущую раскладки в sql бд Bullmer.current
-            url = current_db
-            data = {
-                "data": {
-                    "idrask": str(sqlite_get_last_two_records(bullmer_sqlite_db)[0])[
-                        :-2
-                    ][1:],  # string
-                    "idraspost": str(sqlite_get_last_two_records(bullmer_sqlite_db)[1])[
-                        :-2
-                    ][1:],  # string
-                    "komp": "Bullmer" + str(bullmer_db_log_name),  # string
-                }
-            }
-            if form.lineEdit.text() == "":
-                pass
             else:
-                print("sent current to SQL current")
-                print(requests.post(current_db, json=data, timeout=2.50))
+                print(f"HTTP ошибка: {http_err}")
+                btn_clk()
 
-        except Exception as ex:
-            print(ex)
-            form.lcdNumber_3.display(None)
-            form.lcdNumber_4.display(None)
+        except requests.exceptions.RequestException as err:
+            print(f"Ошибка запроса: {err}")
+            btn_clk()
+        else:
+            global marker_id
+            text = form.lineEdit.text()  # получаем текст из QLineEdit
+            try:
+                marker_id = int(text)
+            except ValueError:
+                btn_clk()
+
+            nextgen_clicker()  # запускаем редактор NextGen
+            sql_drills_get()  # эта функция присваивает значения глобальным переменным сверл базы, для управления окном функцией read_serial_arduino()
+            url = drills_db
+            myobj = {"markerID": form.lineEdit.text()}
+            try:
+                x = requests.get(url, myobj)
+
+                # выводим ответ
+                form.lcdNumber_3.display(x.json().get("Сверло1", None))
+                form.lcdNumber_4.display(x.json().get("Сверло2", None))
+
+                # проверяем, сканировали ли мы эту раскладку ранее (проверяем последнюю запись в SQLite). Если да, выводим worning
+                if sqlite_get(bullmer_sqlite_db) == form.lineEdit.text():
+                    print("Уже сканировали " + sqlite_get_time(bullmer_sqlite_db))
+                    worning_window("Уже сканировали!!!", "red", 6000)
+                    btn_clk()
+
+                # записывает отсканированную раскладку в sqlite
+                sqlite_post(form.lineEdit.text(), bullmer_sqlite_db)
+
+                # записываем текущую и предыдущую раскладки в sql бд Bullmer.current
+                url = current_db
+                data = {
+                    "data": {
+                        "idrask": str(
+                            sqlite_get_last_two_records(bullmer_sqlite_db)[0]
+                        )[:-2][1:],  # string
+                        "idraspost": str(
+                            sqlite_get_last_two_records(bullmer_sqlite_db)[1]
+                        )[:-2][1:],  # string
+                        "komp": "Bullmer" + str(bullmer_db_log_name),  # string
+                    }
+                }
+                if form.lineEdit.text() == "":
+                    pass
+                else:
+                    print("sent current to SQL current")
+                    print(requests.post(current_db, json=data, timeout=2.50))
+
+            except Exception as ex:
+                print(ex)
+                form.lcdNumber_3.display(None)
+                form.lcdNumber_4.display(None)
 
     # эта функция срабатывает при изменении текста в поле пароль бригадира
     def ln_changed_sv():
@@ -566,7 +590,7 @@ async def main():
             list1.sort()
             list2.sort()
 
-            if form.lineEdit.text() != "" and drill_id != 0:
+            if marker_id != 0:
                 if list1 == list2:  # сверла селектора совпадают с базой
                     window.hide()
                 elif (list2[0] == list2[1]) and list2[0] == list1[
