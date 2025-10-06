@@ -1,0 +1,31 @@
+Bullmer:
+
+  bullmer_sqlite_db : "bullmersqlite.db"
+
+  bullmer_log_folder_filter : "c:\\TEMP"
+ 
+  bullmer_db_log_name : "2"
+
+ 
+  drills_db : "http://10.55.128.67:5000/cutting/drills"
+
+  
+  blogs_db : "http://10.55.128.67:5000/cutting/bullmerStat"
+
+  
+  current_db : "http://10.55.128.67:5000/cutting/currentBullmerLog"
+
+  
+  nextgen_name : "NextGeneration R7.8.1, 28.05.2018"
+
+  
+  supervisor_pass : "bucut"
+
+  
+  serial_port : "COM6"
+
+  blog_db_batch : "http://10.55.128.67:5000/cutting/bullmerStatBatch"
+
+  nats_ip : "nats://10.55.128.67:4222"
+
+  drills_off : "110100011001011"

@@ -27,6 +27,28 @@ from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout
 from PyQt5.QtCore import Qt, QTimer
+import sys
+import psutil
+
+# проверяем на повторный запуск программы, чтобы она не лочила компорт
+
+
+def check_already_running():
+    current_pid = os.getpid()
+    current_name = os.path.basename(sys.argv[0])
+
+    for proc in psutil.process_iter(["pid", "name", "cmdline"]):
+        try:
+            if proc.info["pid"] != current_pid:
+                if proc.info["cmdline"] and current_name in proc.info["cmdline"][0]:
+                    print("Программа уже запущена!")
+                    sys.exit(0)
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            continue
+
+
+check_already_running()
+
 
 _winrt.uninit_apartment()  # Убираем ошибку при запуске (https://github.com/hbldh/bleak/issues/423)
 
@@ -77,11 +99,14 @@ drills_off = Bullmer["Bullmer"]["drills_off"]
 
 #############################################################################################
 # иницилизация порта Ардуино
-ser = serial.Serial()
-ser.baudrate = 9600
-ser.port = serial_port
-ser.open()
-time.sleep(2)
+while True:
+    try:
+        ser = serial.Serial(port=serial_port, baudrate=9600, timeout=1)
+        break  # порт успешно открыт, выходим из цикла
+    except serial.SerialException as e:
+        print(f"Ошибка при открытии порта {serial_port}: {e}")
+        time.sleep(2)
+
 
 # Создаем глобальный DataFrame
 ##############################################################################################
@@ -516,93 +541,112 @@ async def main():
 
     # эта функция получает строку с ардуино и вносит значения в интерфейс
     def read_serial_arduino():
-        if ser.isOpen() != True:
-            ser.open()
-        else:
-            pass
+        if not ser.is_open:
+            while True:
+                try:
+                    ser.open()  # откроет только если закрыт
 
-        ser.write(b"1")
-        # убираем ворнинги от asyncio
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            asyncio.sleep(0.1)
+                    break
+                except serial.SerialException as e:
+                    print(f"[WARN] Порт недоступен: {e}")
+                time.sleep(2)
+        try:
+            ser.write(b"1")
+            # убираем ворнинги от asyncio
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                asyncio.sleep(0.1)
 
-        while ser.in_waiting:
-            arduinostring = ser.readline().decode("utf-8")[:-2]
-            form.label_3.setText(arduinostring)
-            symbols = []  # массив символов - показаний ардуино
-            drills = [
-                "2",
-                "3",
-                "4",
-                "6",
-                "8",
-                "10",
-                "12",
-                "15",
-                "17",
-                "18",
-                "20",
-                "21",
-                "22",
-                "24",
-                "26",
-            ]  # массив обозначений сверел селектора
+            while ser.in_waiting:
+                arduinostring = ser.readline().decode("utf-8")[:-2]
+                form.label_3.setText(arduinostring)
+                symbols = []  # массив символов - показаний ардуино
+                drills = [
+                    "2",
+                    "3",
+                    "4",
+                    "6",
+                    "8",
+                    "10",
+                    "12",
+                    "15",
+                    "17",
+                    "18",
+                    "20",
+                    "21",
+                    "22",
+                    "24",
+                    "26",
+                ]  # массив обозначений сверел селектора
 
-            for index, symbol in enumerate(arduinostring):
-                # здесь пишем логику наложения маски отключенных сверл на строку показаний с датчиком
+                for index, symbol in enumerate(arduinostring):
+                    # здесь пишем логику наложения маски отключенных сверл на строку показаний с датчиком
 
-                if drills_off[index] == "0":
-                    symbols += symbol
+                    if drills_off[index] == "0":
+                        symbols += symbol
+                    else:
+                        symbols += "0"
+
+                indices = get_indices("1", symbols)
+
+                if len(indices) == 1:  # если вытащили одно сверло
+                    form.lcdNumber.display(drills[indices[0]])
+                    form.lcdNumber_2.display(None)
+                    drill1 = drills[indices[0]]
+                    drill2 = 0
+
+                elif len(indices) == 2:
+                    form.lcdNumber.display(drills[indices[0]])
+                    form.lcdNumber_2.display(drills[indices[1]])
+                    drill1 = drills[indices[0]]
+                    drill2 = drills[indices[1]]
                 else:
-                    symbols += "0"
+                    form.lcdNumber.display(None)
+                    form.lcdNumber_2.display(None)
+                    drill1 = 0
+                    drill2 = 0
 
-            indices = get_indices("1", symbols)
+                    # запускаем функцию сравнения значений селектора и базы. Управляем окном.
+                    ########################################################################
 
-            if len(indices) == 1:  # если вытащили одно сверло
-                form.lcdNumber.display(drills[indices[0]])
-                form.lcdNumber_2.display(None)
-                drill1 = drills[indices[0]]
-                drill2 = 0
+                list1 = [
+                    int(drill1),
+                    int(drill2),
+                ]  # список для сравнения сверл селектора и сверл базы
+                list2 = [
+                    int(drill1_sql),
+                    int(drill2_sql),
+                ]  # список для сравнения сверл селектора и сверл базы
+                list1.sort()
+                list2.sort()
 
-            elif len(indices) == 2:
-                form.lcdNumber.display(drills[indices[0]])
-                form.lcdNumber_2.display(drills[indices[1]])
-                drill1 = drills[indices[0]]
-                drill2 = drills[indices[1]]
-            else:
-                form.lcdNumber.display(None)
-                form.lcdNumber_2.display(None)
-                drill1 = 0
-                drill2 = 0
-
-                # запускаем функцию сравнения значений селектора и базы. Управляем окном.
-                ########################################################################
-
-            list1 = [
-                int(drill1),
-                int(drill2),
-            ]  # список для сравнения сверл селектора и сверл базы
-            list2 = [
-                int(drill1_sql),
-                int(drill2_sql),
-            ]  # список для сравнения сверл селектора и сверл базы
-            list1.sort()
-            list2.sort()
-
-            if marker_id != 0:
-                if list1 == list2:  # сверла селектора совпадают с базой
-                    window.hide()
-                elif (list2[0] == list2[1]) and list2[0] == list1[
-                    1
-                ]:  # сверла базы одинаковые
-                    window.hide()
+                if marker_id != 0:
+                    if list1 == list2:  # сверла селектора совпадают с базой
+                        window.hide()
+                    elif (list2[0] == list2[1]) and list2[0] == list1[
+                        1
+                    ]:  # сверла базы одинаковые
+                        window.hide()
+                    else:
+                        window.show()
                 else:
                     window.show()
-            else:
-                window.show()
 
-                #########################################################################
+                    #########################################################################
+        except serial.SerialException as e:
+            print(f"[ERROR] Ошибка работы с портом: {e}. Переподключение...")
+            ser.close()
+
+    # Перезапускает текущий процесс
+    def restart_program():
+        python = sys.executable
+        os.execl(python, python, *sys.argv)
+
+    # Переопределяем событие закрытия у главного окна
+    def prevent_close_event(event):
+        event.ignore()  # не даём PyQt закрыть окно
+        window.hide()  # можно скрыть, если нужно
+        restart_program()
 
     # подключаем файл, полученный в QtDesigner
     Form, Window = uic.loadUiType("interface.ui")
@@ -615,7 +659,7 @@ async def main():
         QtCore.Qt.FramelessWindowHint, True
     )  # Запрещаем двигать окно, убирая рамку
     window.setWindowFlag(QtCore.Qt.WindowMinimizeButtonHint, False)
-
+    window.closeEvent = prevent_close_event
     window.show()
 
     # настраиваем сценарий для элемента pushButton (под id раскладки)

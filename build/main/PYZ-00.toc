@@ -2600,6 +2600,15 @@
    'C:\\Program '
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.8_3.8.2800.0_x64__qbz5n2kfra8p0\\lib\\pprint.py',
    'PYMODULE'),
+  ('psutil',
+   'c:\\pythonprojects\\drills\\venv\\lib\\site-packages\\psutil\\__init__.py',
+   'PYMODULE'),
+  ('psutil._common',
+   'c:\\pythonprojects\\drills\\venv\\lib\\site-packages\\psutil\\_common.py',
+   'PYMODULE'),
+  ('psutil._pswindows',
+   'c:\\pythonprojects\\drills\\venv\\lib\\site-packages\\psutil\\_pswindows.py',
+   'PYMODULE'),
   ('py_compile',
    'C:\\Program '
    'Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.8_3.8.2800.0_x64__qbz5n2kfra8p0\\lib\\py_compile.py',
