@@ -29,3 +29,5 @@ Bullmer:
   nats_ip : "nats://10.55.128.67:4222"
 
   drills_off : "110100011001011"
+
+  test_marker : "496969"

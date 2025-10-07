@@ -156,6 +156,9 @@ nats_ip = Bullmer["Bullmer"]["nats_ip"]
 # строка сверл, котрые мы отключили для отслеживания. 0 - датчик отслеживается, 1 - датчик выключен программно
 drills_off = Bullmer["Bullmer"]["drills_off"]
 
+# тестовая раскладка, мы не будем писать ее в базу
+test_marker = Bullmer["Bullmer"]["test_marker"]
+
 # Проверка наличия interface.ui
 try:
     ui_files = glob.glob("interface.ui")
@@ -545,11 +548,13 @@ async def main():
         try:
             url = drills_db
             myobj = {"markerID": form.lineEdit.text()}
-            x = requests.get(url, myobj)
+
+            x = requests.get(url, params=myobj)
+            print(x.json())
 
             data = x.json()
             if data is None:
-                print("❌ Сервер вернул None")
+                print("❌ Нет такой раскладки. Сервер вернул None")
                 btn_clk()
                 return
             x.raise_for_status()  # выбросит исключение для 4xx и 5xx ошибок
@@ -566,7 +571,7 @@ async def main():
             btn_clk()
         else:
             global marker_id
-            text = form.lineEdit.text()  # получаем текст из QLineEdit
+            text = x.json().get("id", None)  # получаем текст из QLineEdit
             try:
                 marker_id = int(text)
             except ValueError:
@@ -577,21 +582,26 @@ async def main():
             url = drills_db
             myobj = {"markerID": form.lineEdit.text()}
             try:
-                x = requests.get(url, myobj)
+                x = requests.get(url, params=myobj)
 
                 # выводим ответ
                 form.lcdNumber_3.display(x.json().get("Сверло1", None))
                 form.lcdNumber_4.display(x.json().get("Сверло2", None))
 
                 # проверяем, сканировали ли мы эту раскладку ранее (проверяем последнюю запись в SQLite). Если да, выводим worning
-                if sqlite_get(bullmer_sqlite_db) == form.lineEdit.text():
+                if sqlite_get(bullmer_sqlite_db).strip("'\"") == form.lineEdit.text():
                     print(" ❌ Уже сканировали " + sqlite_get_time(bullmer_sqlite_db))
                     worning_window("Уже сканировали!!!", "red", 6000)
                     btn_clk()
 
                 # записывает отсканированную раскладку в sqlite
-                sqlite_post(form.lineEdit.text(), bullmer_sqlite_db)
-
+                if (
+                    test_marker == form.lineEdit.text()
+                ):  # если это тест, то в базу sqlite не пишем, чтобы убрать повторный ворнинг
+                    pass
+                else:
+                    sqlite_post(form.lineEdit.text(), bullmer_sqlite_db)
+                """"
                 # записываем текущую и предыдущую раскладки в sql бд Bullmer.current
                 url = current_db
                 data = {
@@ -610,7 +620,7 @@ async def main():
                 else:
                     print(" ✅ sent current to SQL current")
                     print(requests.post(current_db, json=data, timeout=2.50))
-
+                """
             except Exception as ex:
                 print(ex)
                 form.lcdNumber_3.display(None)
