@@ -26,9 +26,23 @@ import json
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt, QTimer, QObject, pyqtSignal
 import sys
 import psutil
+
+# перенаправление консоли
+
+
+class EmittingStream(QObject):
+    text_written = pyqtSignal(str)
+
+    def write(self, text):
+        if text:
+            self.text_written.emit(str(text))
+
+    def flush(self):
+        pass
+
 
 # проверяем на повторный запуск программы, чтобы она не лочила компорт
 
@@ -41,7 +55,7 @@ def check_already_running():
         try:
             if proc.info["pid"] != current_pid:
                 if proc.info["cmdline"] and current_name in proc.info["cmdline"][0]:
-                    print("Программа уже запущена!")
+                    print(" ⚠️ Программа уже запущена!")
                     sys.exit(0)
         except (psutil.NoSuchProcess, psutil.AccessDenied):
             continue
@@ -63,8 +77,53 @@ with open("config.yml", "r") as file:
 # иницилизация имени базы SQLite
 bullmer_sqlite_db = Bullmer["Bullmer"]["bullmer_sqlite_db"]
 
+if not os.path.exists(bullmer_sqlite_db):
+    print(
+        f"⚠️ База данных '{bullmer_sqlite_db}' не найдена. Создаём новую SQLite-базу..."
+    )
+    try:
+        conn = sqlite3.connect(bullmer_sqlite_db)
+        cursor = conn.cursor()
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS idRasks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            marker_id INTEGER NOT NULL,
+            datetime TEXT NOT NULL
+        )
+        """)
+        cursor.execute(
+            "INSERT INTO idRasks (marker_id, datetime) VALUES (?,?)",
+            (1, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+        )
+        cursor.execute(
+            "INSERT INTO idRasks (marker_id, datetime) VALUES (?,?)",
+            (1, datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
+        )
+        conn.commit()
+        conn.close()
+        print("✅ Новая база данных успешно создана.")
+    except Exception as e:
+        print(f"❌ Ошибка при создании базы данных: {e}")
+        sys.exit(1)
+
 # иницилизация самый ранний файл csv в каталоге булмера (маска поиска)
 bullmer_log_folder_filter = Bullmer["Bullmer"]["bullmer_log_folder_filter"] + "\*.csv"
+search_mask = os.path.join(Bullmer["Bullmer"]["bullmer_log_folder_filter"], "*.csv")
+try:
+    csv_files = glob.glob(search_mask)
+
+    if not csv_files:
+        raise FileNotFoundError(
+            f"❌ В каталоге '{Bullmer['Bullmer']['bullmer_log_folder_filter']}' не найдено ни одного CSV-файла."
+        )
+
+    # находим самый ранний файл по дате изменения
+    earliest_csv = min(csv_files, key=os.path.getmtime)
+    print(f"✅ Найден CSV-файл: {earliest_csv}")
+
+except Exception as e:
+    print(f"⚠️ Ошибка при поиске CSV: {e}")
+    sys.exit(1)  # завершаем программу, чтобы не продолжать без данных
 
 # инициализация названия булмера
 bullmer_db_log_name = Bullmer["Bullmer"]["bullmer_db_log_name"]
@@ -97,6 +156,38 @@ nats_ip = Bullmer["Bullmer"]["nats_ip"]
 # строка сверл, котрые мы отключили для отслеживания. 0 - датчик отслеживается, 1 - датчик выключен программно
 drills_off = Bullmer["Bullmer"]["drills_off"]
 
+# Проверка наличия interface.ui
+try:
+    ui_files = glob.glob("interface.ui")
+
+    if not ui_files:
+        raise FileNotFoundError(
+            "❌ Файл интерфейса 'interface.ui' не найден в текущей директории."
+        )
+
+    interface_path = ui_files[0]
+    print(f"✅ Найден UI-файл: {interface_path}")
+
+except Exception as e:
+    print(f"⚠️ Ошибка при поиске interface.ui: {e}")
+    sys.exit(1)
+
+# Проверка наличия config.yml
+try:
+    ui_files = glob.glob("config.yml")
+
+    if not ui_files:
+        raise FileNotFoundError(
+            "❌ Файл конфига 'config.yml' не найден в текущей директории."
+        )
+
+    config_path = ui_files[0]
+    print(f"✅ Найден UI-файл: {config_path}")
+
+except Exception as e:
+    print(f"⚠️ Ошибка при поиске config.yml: {e}")
+    sys.exit(1)
+
 #############################################################################################
 # иницилизация порта Ардуино
 while True:
@@ -104,7 +195,7 @@ while True:
         ser = serial.Serial(port=serial_port, baudrate=9600, timeout=1)
         break  # порт успешно открыт, выходим из цикла
     except serial.SerialException as e:
-        print(f"Ошибка при открытии порта {serial_port}: {e}")
+        print(f" ❌ Ошибка при открытии порта {serial_port}: {e}")
         time.sleep(2)
 
 
@@ -171,8 +262,7 @@ def nextgen_clicker():
         ).click_input()
 
     except Exception:
-        print("Запустите NextGen")
-        # worning_window("Запустите NextGen", "blue", 3000)
+        print(" ⚠️ Запустите NextGen")
 
 
 # функция, сравнивает показания селектра и базы
@@ -282,14 +372,6 @@ async def main():
         connection = sqlite3.connect(db)
         cursor = connection.cursor()
 
-        # Создаем таблицу раскладок в sqlite
-        cursor.execute(
-            "CREATE TABLE IF NOT EXISTS idRasks (id INTEGER PRIMARY KEY, marker_id TEXT, datetime TEXT)"
-        )
-
-        # Сохраняем изменения
-        connection.commit()
-
         if marker_id != "":
             cursor.execute(
                 "INSERT INTO idRasks (marker_id, datetime) VALUES (?,?)",
@@ -364,7 +446,7 @@ async def main():
                 }
                 list.append(data)
             addtosqldata = {"data": {"cutter": bullmer_db_log_name, "payload": list}}
-            print("sent log to SQL")
+            print(" ✅ sent log to SQL")
             print(requests.post(blog_db_batch, json=addtosqldata, timeout=None))
 
         except Exception as err:
@@ -464,18 +546,23 @@ async def main():
             url = drills_db
             myobj = {"markerID": form.lineEdit.text()}
             x = requests.get(url, myobj)
+
+            data = x.json()
+            if data is None:
+                print("❌ Сервер вернул None")
+                btn_clk()
+                return
             x.raise_for_status()  # выбросит исключение для 4xx и 5xx ошибок
         except requests.exceptions.HTTPError as http_err:
             if http_err.response is not None and http_err.response.status_code == 500:
-                print("Ошибка сервера 500: попробуйте позже")
+                print(" ❌ Ошибка сервера 500: попробуйте позже")
                 btn_clk()
-
             else:
-                print(f"HTTP ошибка: {http_err}")
+                print(f" ❌ HTTP ошибка: {http_err}")
                 btn_clk()
 
         except requests.exceptions.RequestException as err:
-            print(f"Ошибка запроса: {err}")
+            print(f" ❌ Ошибка запроса: {err}")
             btn_clk()
         else:
             global marker_id
@@ -498,7 +585,7 @@ async def main():
 
                 # проверяем, сканировали ли мы эту раскладку ранее (проверяем последнюю запись в SQLite). Если да, выводим worning
                 if sqlite_get(bullmer_sqlite_db) == form.lineEdit.text():
-                    print("Уже сканировали " + sqlite_get_time(bullmer_sqlite_db))
+                    print(" ❌ Уже сканировали " + sqlite_get_time(bullmer_sqlite_db))
                     worning_window("Уже сканировали!!!", "red", 6000)
                     btn_clk()
 
@@ -521,7 +608,7 @@ async def main():
                 if form.lineEdit.text() == "":
                     pass
                 else:
-                    print("sent current to SQL current")
+                    print(" ✅ sent current to SQL current")
                     print(requests.post(current_db, json=data, timeout=2.50))
 
             except Exception as ex:
@@ -548,7 +635,7 @@ async def main():
 
                     break
                 except serial.SerialException as e:
-                    print(f"[WARN] Порт недоступен: {e}")
+                    print(f" ❌[WARN] Порт недоступен: {e}")
                 time.sleep(2)
         try:
             ser.write(b"1")
@@ -634,7 +721,7 @@ async def main():
 
                     #########################################################################
         except serial.SerialException as e:
-            print(f"[ERROR] Ошибка работы с портом: {e}. Переподключение...")
+            print(f" ❌[ERROR] Ошибка работы с портом: {e}. Переподключение...")
             ser.close()
 
     # Перезапускает текущий процесс
@@ -653,6 +740,15 @@ async def main():
     app = QApplication([])
     window, form = Window(), Form()
     form.setupUi(window)
+
+    def append_text(text):
+        form.textEditConsole.moveCursor(form.textEditConsole.textCursor().End)
+        form.textEditConsole.insertPlainText(text)
+        form.textEditConsole.ensureCursorVisible()
+
+    sys.stdout_stream = EmittingStream()
+    sys.stdout_stream.text_written.connect(append_text)
+    sys.stdout = sys.stdout_stream
 
     window.setWindowFlag(QtCore.Qt.WindowStaysOnTopHint, True)  # Поверх всех окон
     window.setWindowFlag(
