@@ -601,26 +601,7 @@ async def main():
                     pass
                 else:
                     sqlite_post(form.lineEdit.text(), bullmer_sqlite_db)
-                """"
-                # записываем текущую и предыдущую раскладки в sql бд Bullmer.current
-                url = current_db
-                data = {
-                    "data": {
-                        "idrask": str(
-                            sqlite_get_last_two_records(bullmer_sqlite_db)[0]
-                        )[:-2][1:],  # string
-                        "idraspost": str(
-                            sqlite_get_last_two_records(bullmer_sqlite_db)[1]
-                        )[:-2][1:],  # string
-                        "komp": "Bullmer" + str(bullmer_db_log_name),  # string
-                    }
-                }
-                if form.lineEdit.text() == "":
-                    pass
-                else:
-                    print(" ✅ sent current to SQL current")
-                    print(requests.post(current_db, json=data, timeout=2.50))
-                """
+
             except Exception as ex:
                 print(ex)
                 form.lcdNumber_3.display(None)
