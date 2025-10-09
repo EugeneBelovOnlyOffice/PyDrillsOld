@@ -191,6 +191,9 @@ except Exception as e:
     print(f"⚠️ Ошибка при поиске config.yml: {e}")
     sys.exit(1)
 
+drill1_check_sharpness = Bullmer["Bullmer"]["drill1_check_sharpness"]
+drill2_check_sharpness = Bullmer["Bullmer"]["drill2_check_sharpness"]
+
 #############################################################################################
 # иницилизация порта Ардуино
 while True:
@@ -501,6 +504,7 @@ async def main():
         form.lineEdit.setFocus()
         form.lcdNumber_3.display(None)
         form.lcdNumber_4.display(None)
+        form.label_10.setText("")
 
     # эта функция отправки текущей и предыдущей раскладки в nats
     async def send_nats():
@@ -593,14 +597,29 @@ async def main():
                     print(" ❌ Уже сканировали " + sqlite_get_time(bullmer_sqlite_db))
                     worning_window("Уже сканировали!!!", "red", 6000)
                     btn_clk()
-
-                # записывает отсканированную раскладку в sqlite
-                if (
-                    test_marker == form.lineEdit.text()
-                ):  # если это тест, то в базу sqlite не пишем, чтобы убрать повторный ворнинг
-                    pass
                 else:
-                    sqlite_post(form.lineEdit.text(), bullmer_sqlite_db)
+                    # записывает отсканированную раскладку в sqlite
+                    if (
+                        test_marker == form.lineEdit.text()
+                    ):  # если это тест, то в базу sqlite не пишем, чтобы убрать повторный ворнинг
+                        pass
+                    else:
+                        # Получаем значения из JSON
+                        s1 = x.json().get("Сверло1", None)
+                        s2 = x.json().get("Сверло2", None)
+
+                        if s1 in [
+                            drill1_check_sharpness,
+                            drill2_check_sharpness,
+                        ] or s2 in [
+                            drill1_check_sharpness,
+                            drill2_check_sharpness,
+                        ]:  # если сверла 4 или 8, то выводим сообщения
+                            form.label_10.setStyleSheet("color: #FF0000;")
+                            form.label_10.setText("Поправь сверло!")
+                        else:
+                            form.label_10.setText("")
+                        sqlite_post(form.lineEdit.text(), bullmer_sqlite_db)
 
             except Exception as ex:
                 print(ex)
