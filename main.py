@@ -254,21 +254,25 @@ except IndexError:
 
 # эта функция кликает по кнопке в nextgen
 def nextgen_clicker():
-    pywinauto.timings.Timings.fast()  # устанавливаем глобально быстрые тайминги для  pywinauto
+    pywinauto.timings.Timings.fast()  # Ускоряет все операции pywinauto (меньше задержек)
     try:
-        # здесь мы ищем наиболее подходящее окно по названию
+        # Ищем окно приложения NextGen по имени
         handle = pywinauto.findwindows.find_window(best_match=nextgen_name)
 
+        # Подключаемся к окну приложения
         app = pywinauto.application.Application(backend="uia").connect(
             handle=handle, timeout=1
         )
-        # кликаем по кнопке редактора
+        app.top_window().set_focus()
+        # Находим элемент (панель редактора) и кликаем по нему
         app.Dialog.child_window(
-            best_match="itsQueueEditPane", control_type="Pane"
+            best_match="itsQueueEditPane",
+            control_type="Pane",
         ).click_input()
-
-    except Exception:
-        print(" ⚠️ Запустите NextGen")
+        print("Клик успешно выполнен!")
+    except Exception as e:
+        print(f"Ошибка при работе с NextGen: {e}")
+        print("Убедитесь, что программа запущена и окно доступно.")
 
 
 # функция, сравнивает показания селектра и базы
@@ -581,8 +585,8 @@ async def main():
             except ValueError:
                 btn_clk()
 
-            nextgen_clicker()  # запускаем редактор NextGen
             sql_drills_get()  # эта функция присваивает значения глобальным переменным сверл базы, для управления окном функцией read_serial_arduino()
+            nextgen_clicker()  # запускаем редактор NextGen
             url = drills_db
             myobj = {"markerID": form.lineEdit.text()}
             try:

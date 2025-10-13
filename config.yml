@@ -31,3 +31,8 @@ Bullmer:
   drills_off : "110100011001011"
 
   test_marker : "496969"
+
+  drill1_check_sharpness : "4"
+  
+  drill2_check_sharpness : "2"
+
