@@ -11,6 +11,7 @@ import pandas as pd  # используем для анализа логов и 
 import sqlite3
 import datetime
 import pywinauto
+from pywinauto import application, findwindows
 import warnings
 from tkinter import *
 from tkinter import font
@@ -253,6 +254,8 @@ except IndexError:
 
 
 # эта функция кликает по кнопке в nextgen
+
+
 def nextgen_clicker():
     pywinauto.timings.Timings.fast()  # Ускоряет все операции pywinauto (меньше задержек)
     try:
@@ -586,7 +589,9 @@ async def main():
                 btn_clk()
 
             sql_drills_get()  # эта функция присваивает значения глобальным переменным сверл базы, для управления окном функцией read_serial_arduino()
+            window.hide()  # скрываем окно, чтобы кликнуть по кнопке
             nextgen_clicker()  # запускаем редактор NextGen
+            window.show()  # запускаем снова окно
             url = drills_db
             myobj = {"markerID": form.lineEdit.text()}
             try:
