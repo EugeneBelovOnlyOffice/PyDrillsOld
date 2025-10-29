@@ -775,6 +775,25 @@ async def main():
     )  # Запрещаем двигать окно, убирая рамку
     window.setWindowFlag(QtCore.Qt.WindowMinimizeButtonHint, False)
     window.closeEvent = prevent_close_event
+
+    # рисуем окно по центру экрана
+
+    # Получаем геометрию экрана
+    screen_geometry = QApplication.desktop().screenGeometry()
+    screen_width = screen_geometry.width()
+    screen_height = screen_geometry.height()
+
+    # Получаем размер окна
+    window_width = window.frameGeometry().width()
+    window_height = window.frameGeometry().height()
+
+    # Вычисляем координаты для центра
+    x = (screen_width - window_width) // 2
+    y = (screen_height - window_height) // 2
+
+    # Перемещаем окно
+    window.move(x, y)
+
     window.show()
 
     # настраиваем сценарий для элемента pushButton (под id раскладки)
