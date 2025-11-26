@@ -36,3 +36,5 @@ Bullmer:
   
   drill2_check_sharpness : "2"
 
+  turn_off_selector: "true"
+

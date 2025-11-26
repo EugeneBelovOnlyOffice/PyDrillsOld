@@ -194,6 +194,8 @@ except Exception as e:
 
 drill1_check_sharpness = Bullmer["Bullmer"]["drill1_check_sharpness"]
 drill2_check_sharpness = Bullmer["Bullmer"]["drill2_check_sharpness"]
+# этим параметром мы отключаем проверку сверл. Остается только окно раскладок. Сверла всегда стоят в голове
+turn_off_selector = Bullmer["Bullmer"]["turn_off_selector"]
 
 #############################################################################################
 # иницилизация порта Ардуино
@@ -732,6 +734,10 @@ async def main():
                     elif (list2[0] == list2[1]) and list2[0] == list1[
                         1
                     ]:  # сверла базы одинаковые
+                        window.hide()
+                    elif (
+                        turn_off_selector == "true"
+                    ):  # в конфиге отключаем проверку сверл и всегда сваоачиваем окно
                         window.hide()
                     else:
                         window.show()
