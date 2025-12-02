@@ -22,7 +22,7 @@ Bullmer:
   supervisor_pass : "bucut"
 
   
-  serial_port : "COM6"
+  serial_port : "COM3"
 
   blog_db_batch : "http://10.55.128.67:5000/cutting/bullmerStatBatch"
 
@@ -37,4 +37,10 @@ Bullmer:
   drill2_check_sharpness : "2"
 
   turn_off_selector: "true"
+
+  wifi_1: "10.55.128.251"
+
+  wifi_2: "10.55.128.252"
+
+  wifi_port: "9999"
 

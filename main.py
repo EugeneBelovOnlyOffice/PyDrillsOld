@@ -30,6 +30,7 @@ from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout
 from PyQt5.QtCore import Qt, QTimer, QObject, pyqtSignal
 import sys
 import psutil
+import scanner
 
 # перенаправление консоли
 
@@ -197,6 +198,10 @@ drill2_check_sharpness = Bullmer["Bullmer"]["drill2_check_sharpness"]
 # этим параметром мы отключаем проверку сверл. Остается только окно раскладок. Сверла всегда стоят в голове
 turn_off_selector = Bullmer["Bullmer"]["turn_off_selector"]
 
+wifi_1 = Bullmer["Bullmer"]["wifi_1"]  # ip первого сканера
+wifi_2 = Bullmer["Bullmer"]["wifi_2"]  # ip второго сканера
+wifi_port = int(Bullmer["Bullmer"]["wifi_port"])  # порт сканера TCP
+
 #############################################################################################
 # иницилизация порта Ардуино
 while True:
@@ -293,6 +298,21 @@ drill1_sql = 0
 drill2_sql = 0
 drill_id = 0
 marker_id = 0
+drill1_wifi = 0  # переменная хранит отсканированное сверло сканером
+drill2_wifi = 0  # переменная хранит отсканированное сверло сканером
+
+
+# колбэки для получения строки со сканера 1 и 2
+async def on_data_received1(msg):
+    global drill1_wifi
+    drill1_wifi = msg
+    print("Received:", drill1_wifi)
+
+
+async def on_data_received2(msg):
+    global drill2_wifi
+    drill2_wifi = msg
+    print("Received:", drill2_wifi)
 
 
 async def main():
@@ -831,6 +851,20 @@ async def main():
 
     # запускает функцию send_nats() отправки текущей и предыдущей раскладки в nats
     _thread = Thread(target=asyncio.run, args=(send_nats(),))
+    _thread.start()
+
+    # запускает функцию сканирования сверла 1 сканером wifi
+    _thread = Thread(
+        target=asyncio.run,
+        args=(scanner.scanwifi(wifi_1, wifi_port, on_data_received1),),
+    )
+    _thread.start()
+
+    # запускает функцию сканирования сверла 2 сканером wifi
+    _thread = Thread(
+        target=asyncio.run,
+        args=(scanner.scanwifi(wifi_2, wifi_port, on_data_received2),),
+    )
     _thread.start()
 
     # запускаем окно программы
