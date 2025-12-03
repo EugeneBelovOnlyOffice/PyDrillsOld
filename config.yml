@@ -22,13 +22,13 @@ Bullmer:
   supervisor_pass : "bucut"
 
   
-  serial_port : "COM3"
+  serial_port : "COM4"
 
   blog_db_batch : "http://10.55.128.67:5000/cutting/bullmerStatBatch"
 
   nats_ip : "nats://10.55.128.67:4222"
 
-  drills_off : "110100011001011"
+  drills_off : "000000000000000"
 
   test_marker : "496969"
 
@@ -36,7 +36,7 @@ Bullmer:
   
   drill2_check_sharpness : "2"
 
-  turn_off_selector: "true"
+  turn_off_selector: "false"
 
   wifi_1: "10.55.128.251"
 

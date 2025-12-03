@@ -281,7 +281,7 @@ def nextgen_clicker():
         ).click_input()
         print("Клик успешно выполнен!")
     except Exception as e:
-        print(f"Ошибка при работе с NextGen: {e}")
+        print(f"Ошибка при работе с NextGen {e}")
         print("Убедитесь, что программа запущена и окно доступно.")
 
 
@@ -612,7 +612,7 @@ async def main():
 
             sql_drills_get()  # эта функция присваивает значения глобальным переменным сверл базы, для управления окном функцией read_serial_arduino()
             window.hide()  # скрываем окно, чтобы кликнуть по кнопке
-            nextgen_clicker()  # запускаем редактор NextGen
+            # nextgen_clicker()  # запускаем редактор NextGen
             window.show()  # запускаем снова окно
             url = drills_db
             myobj = {"markerID": form.lineEdit.text()}
@@ -749,16 +749,19 @@ async def main():
                 list2.sort()
 
                 if marker_id != 0:
-                    if list1 == list2:  # сверла селектора совпадают с базой
+                    if (
+                        turn_off_selector == "true"
+                    ):  # в конфиге отключаем проверку сверл и всегда сваоачиваем окно
+                        window.hide()
+                    elif drill1_sql == drill1_wifi and drill2_sql == drill2_wifi:
+                        window.hide()
+                    elif list1 == list2:  # сверла селектора совпадают с базой
                         window.hide()
                     elif (list2[0] == list2[1]) and list2[0] == list1[
                         1
                     ]:  # сверла базы одинаковые
                         window.hide()
-                    elif (
-                        turn_off_selector == "true"
-                    ):  # в конфиге отключаем проверку сверл и всегда сваоачиваем окно
-                        window.hide()
+
                     else:
                         window.show()
                 else:
