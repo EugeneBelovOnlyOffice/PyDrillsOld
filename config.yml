@@ -22,7 +22,7 @@ Bullmer:
   supervisor_pass : "bucut"
 
   
-  serial_port : "COM4"
+  serial_port : "COM9"
 
   blog_db_batch : "http://10.55.128.67:5000/cutting/bullmerStatBatch"
 

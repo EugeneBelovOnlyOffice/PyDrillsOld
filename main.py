@@ -526,6 +526,8 @@ async def main():
 
     # эта функция срабатывает при нажатии кнопки "Очистить"
     def btn_clk():
+        global drill1_wifi
+        global drill2_wifi
         global marker_id
         marker_id = 0
         form.lineEdit.setText("")
@@ -534,6 +536,8 @@ async def main():
         form.lcdNumber_3.display(None)
         form.lcdNumber_4.display(None)
         form.label_10.setText("")
+        drill1_wifi = 0
+        drill2_wifi = 0
 
     # эта функция отправки текущей и предыдущей раскладки в nats
     async def send_nats():
@@ -612,7 +616,7 @@ async def main():
 
             sql_drills_get()  # эта функция присваивает значения глобальным переменным сверл базы, для управления окном функцией read_serial_arduino()
             window.hide()  # скрываем окно, чтобы кликнуть по кнопке
-            # nextgen_clicker()  # запускаем редактор NextGen
+            nextgen_clicker()  # запускаем редактор NextGen
             window.show()  # запускаем снова окно
             url = drills_db
             myobj = {"markerID": form.lineEdit.text()}
@@ -753,17 +757,22 @@ async def main():
                         turn_off_selector == "true"
                     ):  # в конфиге отключаем проверку сверл и всегда сваоачиваем окно
                         window.hide()
-                    elif drill1_sql == drill1_wifi and drill2_sql == drill2_wifi:
+
+                    elif (drill1_sql == drill1_wifi and drill2_sql == drill2_wifi) and (
+                        list1 == list2
+                    ):  # сверла селектора и сканеров совпадают с базой
                         window.hide()
-                    elif list1 == list2:  # сверла селектора совпадают с базой
-                        window.hide()
-                    elif (list2[0] == list2[1]) and list2[0] == list1[
-                        1
-                    ]:  # сверла базы одинаковые
+
+                    elif (
+                        ((list2[0]) == (list2[1]))
+                        and list2[0] == list1[1]
+                        and sum(list2) != 0
+                    ):  # сверла базы одинаковые
                         window.hide()
 
                     else:
                         window.show()
+
                 else:
                     window.show()
 
