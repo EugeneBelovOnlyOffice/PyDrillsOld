@@ -38,6 +38,8 @@ Bullmer:
 
   turn_off_selector: "false"
 
+  turn_off_wifi_scaners: "false"
+
   wifi_1: "10.55.128.251"
 
   wifi_2: "10.55.128.252"

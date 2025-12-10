@@ -161,6 +161,9 @@ drills_off = Bullmer["Bullmer"]["drills_off"]
 # тестовая раскладка, мы не будем писать ее в базу
 test_marker = Bullmer["Bullmer"]["test_marker"]
 
+# отключаем сканеры wifi
+wifi_disabled = Bullmer["Bullmer"]["turn_off_wifi_scaners"].lower() == "true"
+
 # Проверка наличия interface.ui
 try:
     ui_files = glob.glob("interface.ui")
@@ -758,7 +761,10 @@ async def main():
                     ):  # в конфиге отключаем проверку сверл и всегда сваоачиваем окно
                         window.hide()
 
-                    elif (drill1_sql == drill1_wifi and drill2_sql == drill2_wifi) and (
+                    elif (
+                        wifi_disabled
+                        or (drill1_sql == drill1_wifi and drill2_sql == drill2_wifi)
+                    ) and (
                         list1 == list2
                     ):  # сверла селектора и сканеров совпадают с базой
                         window.hide()
@@ -766,7 +772,7 @@ async def main():
                     elif (
                         ((list2[0]) == (list2[1]))
                         and list2[0] == list1[1]
-                        and sum(list2) != 0
+                        and sum(list2) != 0  # сверла не нулевые
                     ):  # сверла базы одинаковые
                         window.hide()
 
