@@ -26,7 +26,13 @@ import beep
 import json
 from PyQt5.QtWidgets import QMessageBox
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QLabel, QVBoxLayout
+from PyQt5.QtWidgets import (
+    QWidget,
+    QLabel,
+    QVBoxLayout,
+    QDialog,
+    QLineEdit,
+)
 from PyQt5.QtCore import Qt, QTimer, QObject, pyqtSignal
 import sys
 import psutil
@@ -303,6 +309,7 @@ drill_id = 0
 marker_id = 0
 drill1_wifi = 0  # переменная хранит отсканированное сверло сканером
 drill2_wifi = 0  # переменная хранит отсканированное сверло сканером
+marker_owner = None  # переменная хранит бейджик раскройщика
 
 
 # колбэки для получения строки со сканера 1 и 2
@@ -529,11 +536,13 @@ async def main():
 
     # эта функция срабатывает при нажатии кнопки "Очистить"
     def btn_clk():
+        global marker_owner
         global drill1_wifi
         global drill2_wifi
         global marker_id
         marker_id = 0
         form.lineEdit.setText("")
+
         window.activateWindow()
         form.lineEdit.setFocus()
         form.lcdNumber_3.display(None)
@@ -541,6 +550,7 @@ async def main():
         form.label_10.setText("")
         drill1_wifi = 0
         drill2_wifi = 0
+        marker_owner = None
 
     # эта функция отправки текущей и предыдущей раскладки в nats
     async def send_nats():
@@ -577,6 +587,27 @@ async def main():
                     }
                 ).encode(),
             )
+
+    # эта функция отправки текущей раскладки и раскройщика в nats
+    async def send_marker_owner_nats(marker_id, owner):
+        try:
+            nc = await nats.connect(nats_ip)
+            await nc.publish(
+                "bullmerLog",
+                json.dumps(
+                    {
+                        "event": "markerOwnerScan",
+                        "payload": {
+                            "markerID": marker_id,
+                            "owner": owner,
+                        },
+                    }
+                ).encode(),
+            )
+            await nc.drain()
+            print("✅ marker_owner отправлен в NATS")
+        except Exception as e:
+            print("❌ NATS error:", e)
 
     # эта функция срабатывает при нажатии кнопки "Очистить" пароль супервайзера
     def btn_clk_sv():
@@ -616,7 +647,7 @@ async def main():
                 marker_id = int(text)
             except ValueError:
                 btn_clk()
-
+            marker_owner()  # запускаем функцию для сканирования бейджа раскройщика
             sql_drills_get()  # эта функция присваивает значения глобальным переменным сверл базы, для управления окном функцией read_serial_arduino()
             window.hide()  # скрываем окно, чтобы кликнуть по кнопке
             nextgen_clicker()  # запускаем редактор NextGen
@@ -663,6 +694,46 @@ async def main():
                 print(ex)
                 form.lcdNumber_3.display(None)
                 form.lcdNumber_4.display(None)
+
+    # эта функция срабатывает для сканирования бейджа раскройщика
+    def marker_owner():
+        global marker_owner, marker_id
+
+        dlg = QDialog(window)
+        dlg.setModal(True)
+        dlg.setWindowFlags(Qt.Dialog | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
+        dlg.setFixedSize(400, 160)
+
+        layout = QVBoxLayout(dlg)
+
+        label = QLabel("Сканируй бейдж раскройщика")
+        label.setAlignment(Qt.AlignCenter)
+        label.setStyleSheet("font-size: 20px; font-weight: bold;")
+
+        edit = QLineEdit()
+        edit.setFocus()
+        edit.setStyleSheet("font-size: 22px; padding: 6px;")
+
+        layout.addWidget(label)
+        layout.addWidget(edit)
+
+        def accept_scan():
+            global marker_owner
+            value = edit.text().strip()
+            if value:
+                marker_owner = value
+
+                #  отправка в NATS в фоне
+                Thread(
+                    target=asyncio.run,
+                    args=(send_marker_owner_nats(marker_id, marker_owner),),
+                    daemon=True,
+                ).start()
+
+                dlg.accept()
+
+        edit.returnPressed.connect(accept_scan)
+        dlg.exec()
 
     # эта функция срабатывает при изменении текста в поле пароль бригадира
     def ln_changed_sv():
@@ -871,19 +942,22 @@ async def main():
     _thread = Thread(target=asyncio.run, args=(send_nats(),))
     _thread.start()
 
-    # запускает функцию сканирования сверла 1 сканером wifi
-    _thread = Thread(
-        target=asyncio.run,
-        args=(scanner.scanwifi(wifi_1, wifi_port, on_data_received1),),
-    )
-    _thread.start()
+    if wifi_disabled:
+        pass
 
-    # запускает функцию сканирования сверла 2 сканером wifi
-    _thread = Thread(
-        target=asyncio.run,
-        args=(scanner.scanwifi(wifi_2, wifi_port, on_data_received2),),
-    )
-    _thread.start()
+    else:  # запускает функцию сканирования сверла 1 сканером wifi
+        _thread = Thread(
+            target=asyncio.run,
+            args=(scanner.scanwifi(wifi_1, wifi_port, on_data_received1),),
+        )
+        _thread.start()
+
+        # запускает функцию сканирования сверла 2 сканером wifi
+        _thread = Thread(
+            target=asyncio.run,
+            args=(scanner.scanwifi(wifi_2, wifi_port, on_data_received2),),
+        )
+        _thread.start()
 
     # запускаем окно программы
     app.exec()
